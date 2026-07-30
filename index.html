@@ -2,26 +2,29 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Paris Explorer - La Quête des Gardiens</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- React & ReactDOM -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <!-- Babel standalone -->
+    <!-- Babel standalone avec gestion robuste pour mobile -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body class="bg-slate-900 text-slate-800 select-none overflow-x-hidden font-sans">
 
-    <div id="root"></div>
+    <div id="root">
+        <div style="color: white; text-align: center; margin-top: 50vh; font-family: sans-serif;">
+            Chargement de la Quêtes des Gardiens... 🗼
+        </div>
+    </div>
 
-    <script type="text/babel">
+    <script type="text/babel" data-presets="react">
         const { useState, useEffect } = React;
 
-        // Les 7 Énigmes resserrées pour un parcours de 2h sans épuisement
         const ENIGMES_INITIALES = [
             {
                 id: '1',
@@ -60,7 +63,7 @@
                 devinette: 'J\'ai survécu à un terrible incendie. Mes gargouilles et mes chimères observent Paris depuis le haut de mes tours gothiques. Qui suis-je ?',
                 reponseExacte: 'Notre-Dame de Paris',
                 motsCles: ['notre dame', 'notre-dame'],
-                anecdote: 'Le roman de Victor Hugo publié en 1831 a sauvé la cathédrale de la destruction totale en émus le public.',
+                anecdote: 'Le roman de Victor Hugo publié en 1831 a sauvé la cathédrale de la destruction totale en émouvant le public.',
                 defiPhoto: 'Imiter une gargouille effrayante ou protectrice en faisant une grimace.'
             },
             {
@@ -97,7 +100,9 @@
 
         const Icon = ({ name, className = "w-5 h-5" }) => {
             useEffect(() => {
-                if (window.lucide) window.lucide.createIcons();
+                if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                    window.lucide.createIcons();
+                }
             }, [name]);
             return <i data-lucide={name} className={className}></i>;
         };
@@ -138,7 +143,7 @@
             };
 
             const leaveTeam = () => {
-                if (confirm("Changer ou quitter cette équipe ?")) {
+                if (window.confirm("Changer ou quitter cette équipe ?")) {
                     localStorage.removeItem('pe_team_code');
                     setTeamCode('');
                 }
@@ -294,140 +299,17 @@
                     <main className="flex-1 px-4 py-6 space-y-6">
                         {enigmes.map((item) => {
                             const pData = progress[item.id] || {};
-                            const [tempInput, setTempInput] = useState(pData.saisieText || '');
-
+                            // Utilisation d'un composant interne ou gestion locale fluide de l'input
                             return (
-                                <article 
+                                <ItemCard 
                                     key={item.id} 
-                                    className={`p-5 rounded-3xl border transition-all ${
-                                        pData.monumentTrouve 
-                                            ? 'bg-slate-800/90 border-amber-500/40 shadow-lg' 
-                                            : 'bg-slate-800/40 border-slate-700/60'
-                                    }`}
-                                >
-                                    <div className="flex justify-between items-center mb-1">
-                                        <span className="text-xs font-black text-amber-400 tracking-wider uppercase">
-                                            {item.titre}
-                                        </span>
-                                        <span className="bg-slate-900 border border-slate-700 text-amber-300 font-black text-xs px-2.5 py-1 rounded-xl">
-                                            {pData.pointsGagnes || 0} / 12 pts
-                                        </span>
-                                    </div>
-                                    <div className="text-[11px] text-slate-400 font-semibold mb-3 flex items-center gap-1">
-                                        <Icon name="map-pin" className="w-3 h-3 text-amber-500" />
-                                        <span>{item.lieu}</span>
-                                    </div>
-
-                                    <div className="bg-slate-900/80 p-4 rounded-2xl border border-slate-700/50 mb-4">
-                                        <div className="flex items-center gap-1.5 text-slate-400 text-[11px] font-bold uppercase tracking-wider mb-2">
-                                            <Icon name="subway" className="w-3.5 h-3.5 text-amber-400" />
-                                            <span>Énigme (Trajet / Métro)</span>
-                                        </div>
-                                        <p className="text-slate-200 text-xs leading-relaxed italic font-serif">
-                                            « {item.devinette} »
-                                        </p>
-                                    </div>
-
-                                    {!pData.monumentTrouve ? (
-                                        <div className="space-y-2 mb-4">
-                                            <input 
-                                                type="text" 
-                                                placeholder="Quel est ce lieu / monument ?"
-                                                value={tempInput}
-                                                onChange={(e) => setTempInput(e.target.value)}
-                                                className="w-full text-xs p-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-400"
-                                            />
-                                            <button 
-                                                onClick={() => handleTrouverMonument(item, tempInput)}
-                                                className="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition-all"
-                                            >
-                                                Valider le lieu (+5 PTS)
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl mb-4 text-xs">
-                                            <span className="font-bold text-amber-400">Lieu identifié :</span>{' '}
-                                            <span className="text-white font-bold">{item.reponseExacte}</span>
-                                        </div>
-                                    )}
-
-                                    {pData.monumentTrouve && (
-                                        <div className="space-y-4 pt-2 border-t border-slate-700/60">
-                                            
-                                            <div className="bg-slate-900/50 p-3.5 rounded-2xl border border-slate-700/50 space-y-2">
-                                                <div className="flex justify-between items-center">
-                                                    <span className="text-[11px] font-bold text-amber-300 uppercase flex items-center gap-1">
-                                                        <Icon name="book-open" className="w-3.5 h-3.5" />
-                                                        Histoire & Anecdote
-                                                    </span>
-                                                    {!pData.anecdoteLue ? (
-                                                        <button 
-                                                            onClick={() => handleAnecdote(item)}
-                                                            className="text-[10px] bg-amber-500 text-slate-950 px-2.5 py-1 rounded-lg font-black uppercase"
-                                                        >
-                                                            Lire (+3 pts)
-                                                        </button>
-                                                    ) : (
-                                                        <span className="text-[10px] text-emerald-400 font-bold">Lue ✓ (+3 pts)</span>
-                                                    )}
-                                                </div>
-                                                <p className="text-xs text-slate-300 leading-relaxed">
-                                                    {item.anecdote}
-                                                </p>
-                                            </div>
-
-                                            <div className="bg-slate-900/50 p-3.5 rounded-2xl border border-slate-700/50 space-y-3">
-                                                <div className="flex justify-between items-center">
-                                                    <span className="text-[11px] font-bold text-amber-300 uppercase flex items-center gap-1">
-                                                        <Icon name="camera" className="w-3.5 h-3.5" />
-                                                        Défi Photo
-                                                    </span>
-                                                    {pData.photoPrise && (
-                                                        <span className="text-[10px] text-emerald-400 font-bold">Réussi ✓ (+2 pts)</span>
-                                                    )}
-                                                </div>
-
-                                                <p className="text-xs text-slate-300 font-medium">
-                                                    📸 <span className="italic">{item.defiPhoto}</span>
-                                                </p>
-
-                                                <label className="flex items-center justify-center gap-2 py-2.5 px-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 text-xs font-bold rounded-xl cursor-pointer transition-all">
-                                                    <Icon name="upload" className="w-4 h-4 text-amber-400" />
-                                                    <span>{pData.photoData ? 'Changer la photo' : 'Prendre / Importer la photo (+2 pts)'}</span>
-                                                    <input 
-                                                        type="file" 
-                                                        accept="image/*" 
-                                                        capture="environment"
-                                                        onChange={(e) => handlePhoto(item, e.target.files[0])}
-                                                        className="hidden" 
-                                                    />
-                                                </label>
-
-                                                {pData.photoData && (
-                                                    <div className="rounded-xl overflow-hidden max-h-48 border border-slate-700 mt-2">
-                                                        <img src={pData.photoData} alt="Défi photo" className="w-full h-full object-cover" />
-                                                    </div>
-                                                )}
-                                            </div>
-
-                                            <div className="flex justify-between items-center bg-slate-900/30 p-2.5 rounded-xl border border-slate-700/40">
-                                                <span className="text-xs text-slate-400 font-medium">✨ Bonus créativité (Arbitre) :</span>
-                                                <button 
-                                                    onClick={() => handleBonus(item)}
-                                                    className={`px-3 py-1 rounded-lg text-xs font-black transition-all ${
-                                                        pData.bonusCreativite 
-                                                            ? 'bg-emerald-500 text-slate-950' 
-                                                            : 'bg-slate-800 text-slate-400 border border-slate-700'
-                                                    }`}
-                                                >
-                                                    {pData.bonusCreativite ? 'Bonus Accordé ! (+2 pts)' : '+2 pts Bonus'}
-                                                </button>
-                                            </div>
-
-                                        </div>
-                                    )}
-
-                                </article>
+                                    item={item} 
+                                    pData={pData} 
+                                    handleTrouverMonument={handleTrouverMonument}
+                                    handleAnecdote={handleAnecdote}
+                                    handlePhoto={handlePhoto}
+                                    handleBonus={handleBonus}
+                                />
                             );
                         })}
                     </main>
@@ -436,7 +318,148 @@
             );
         };
 
-        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+        // Sous-composant pour isoler l'état de l'input et éviter les re-renders globaux sur mobile
+        const ItemCard = ({ item, pData, handleTrouverMonument, handleAnecdote, handlePhoto, handleBonus }) => {
+            const [tempInput, setTempInput] = useState(pData.saisieText || '');
+
+            return (
+                <article className={`p-5 rounded-3xl border transition-all ${
+                    pData.monumentTrouve 
+                        ? 'bg-slate-800/90 border-amber-500/40 shadow-lg' 
+                        : 'bg-slate-800/40 border-slate-700/60'
+                }`}>
+                    <div className="flex justify-between items-center mb-1">
+                        <span className="text-xs font-black text-amber-400 tracking-wider uppercase">
+                            {item.titre}
+                        </span>
+                        <span className="bg-slate-900 border border-slate-700 text-amber-300 font-black text-xs px-2.5 py-1 rounded-xl">
+                            {pData.pointsGagnes || 0} / 12 pts
+                        </span>
+                    </div>
+                    <div className="text-[11px] text-slate-400 font-semibold mb-3 flex items-center gap-1">
+                        <Icon name="map-pin" className="w-3 h-3 text-amber-500" />
+                        <span>{item.lieu}</span>
+                    </div>
+
+                    <div className="bg-slate-900/80 p-4 rounded-2xl border border-slate-700/50 mb-4">
+                        <div className="flex items-center gap-1.5 text-slate-400 text-[11px] font-bold uppercase tracking-wider mb-2">
+                            <Icon name="subway" className="w-3.5 h-3.5 text-amber-400" />
+                            <span>Énigme (Trajet / Métro)</span>
+                        </div>
+                        <p className="text-slate-200 text-xs leading-relaxed italic font-serif">
+                            « {item.devinette} »
+                        </p>
+                    </div>
+
+                    {!pData.monumentTrouve ? (
+                        <div className="space-y-2 mb-4">
+                            <input 
+                                type="text" 
+                                placeholder="Quel est ce lieu / monument ?"
+                                value={tempInput}
+                                onChange={(e) => setTempInput(e.target.value)}
+                                className="w-full text-xs p-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-400"
+                            />
+                            <button 
+                                onClick={() => handleTrouverMonument(item, tempInput)}
+                                className="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition-all"
+                            >
+                                Valider le lieu (+5 PTS)
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl mb-4 text-xs">
+                            <span className="font-bold text-amber-400">Lieu identifié :</span>{' '}
+                            <span className="text-white font-bold">{item.reponseExacte}</span>
+                        </div>
+                    )}
+
+                    {pData.monumentTrouve && (
+                        <div className="space-y-4 pt-2 border-t border-slate-700/60">
+                            
+                            <div className="bg-slate-900/50 p-3.5 rounded-2xl border border-slate-700/50 space-y-2">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-[11px] font-bold text-amber-300 uppercase flex items-center gap-1">
+                                        <Icon name="book-open" className="w-3.5 h-3.5" />
+                                        Histoire & Anecdote
+                                    </span>
+                                    {!pData.anecdoteLue ? (
+                                        <button 
+                                            onClick={() => handleAnecdote(item)}
+                                            className="text-[10px] bg-amber-500 text-slate-950 px-2.5 py-1 rounded-lg font-black uppercase"
+                                        >
+                                            Lire (+3 pts)
+                                        </button>
+                                    ) : (
+                                        <span className="text-[10px] text-emerald-400 font-bold">Lue ✓ (+3 pts)</span>
+                                    )}
+                                </div>
+                                <p className="text-xs text-slate-300 leading-relaxed">
+                                    {item.anecdote}
+                                </p>
+                            </div>
+
+                            <div className="bg-slate-900/50 p-3.5 rounded-2xl border border-slate-700/50 space-y-3">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-[11px] font-bold text-amber-300 uppercase flex items-center gap-1">
+                                        <Icon name="camera" className="w-3.5 h-3.5" />
+                                        Défi Photo
+                                    </span>
+                                    {pData.photoPrise && (
+                                        <span className="text-[10px] text-emerald-400 font-bold">Réussi ✓ (+2 pts)</span>
+                                    )}
+                                </div>
+
+                                <p className="text-xs text-slate-300 font-medium">
+                                    📸 <span className="italic">{item.defiPhoto}</span>
+                                </p>
+
+                                <label className="flex items-center justify-center gap-2 py-2.5 px-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 text-xs font-bold rounded-xl cursor-pointer transition-all">
+                                    <Icon name="upload" className="w-4 h-4 text-amber-400" />
+                                    <span>{pData.photoData ? 'Changer la photo' : 'Prendre / Importer la photo (+2 pts)'}</span>
+                                    <input 
+                                        type="file" 
+                                        accept="image/*" 
+                                        capture="environment"
+                                        onChange={(e) => handlePhoto(item, e.target.files[0])}
+                                        className="hidden" 
+                                    />
+                                </label>
+
+                                {pData.photoData && (
+                                    <div className="rounded-xl overflow-hidden max-h-48 border border-slate-700 mt-2">
+                                        <img src={pData.photoData} alt="Défi photo" className="w-full h-full object-cover" />
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="flex justify-between items-center bg-slate-900/30 p-2.5 rounded-xl border border-slate-700/40">
+                                <span className="text-xs text-slate-400 font-medium">✨ Bonus créativité (Arbitre) :</span>
+                                <button 
+                                    onClick={() => handleBonus(item)}
+                                    className={`px-3 py-1 rounded-lg text-xs font-black transition-all ${
+                                        pData.bonusCreativite 
+                                            ? 'bg-emerald-500 text-slate-950' 
+                                            : 'bg-slate-800 text-slate-400 border border-slate-700'
+                                    }`}
+                                >
+                                    {pData.bonusCreativite ? 'Bonus Accordé ! (+2 pts)' : '+2 pts Bonus'}
+                                </button>
+                            </div>
+
+                        </div>
+                    )}
+                </article>
+            );
+        };
+
+        // Montage sécurisé pour mobile
+        window.addEventListener('DOMContentLoaded', () => {
+            const rootElement = document.getElementById('root');
+            if (rootElement) {
+                ReactDOM.createRoot(rootElement).render(<App />);
+            }
+        });
     </script>
 </body>
 </html>
