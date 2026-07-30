@@ -6,33 +6,24 @@
     <title>Paris Explorer - La Quête des Gardiens</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- React & ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <!-- Babel standalone avec gestion robuste pour mobile -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="bg-slate-900 text-slate-800 select-none overflow-x-hidden font-sans">
+<body class="bg-slate-900 text-slate-100 select-none overflow-x-hidden font-sans pb-12">
 
-    <div id="root">
-        <div style="color: white; text-align: center; margin-top: 50vh; font-family: sans-serif;">
-            Chargement de la Quêtes des Gardiens... 🗼
-        </div>
+    <div id="app" class="max-w-md mx-auto min-h-screen relative flex flex-col">
+        <!-- Contenu injecté dynamiquement par JavaScript -->
     </div>
 
-    <script type="text/babel" data-presets="react">
-        const { useState, useEffect } = React;
-
-        const ENIGMES_INITIALES = [
+    <script>
+        // Les 7 étapes de la quête
+        const ENIGMES = [
             {
                 id: '1',
                 titre: 'Étape 1 : Le Quartier Moderne',
                 lieu: 'Centre Pompidou / Quartier de l\'Horloge',
                 devinette: 'Je suis célèbre pour mes tuyaux colorés extérieurs. À côté de moi, un automate musical et des œuvres d\'art moderne (comme celles de Kandinsky ou des mosaïques en pixels). Qui suis-je ?',
                 reponseExacte: 'Le Centre Pompidou',
-                motsCles: ['pompidou', 'centre pompidou', 'beaubourg'],
                 anecdote: 'Wassily Kandinsky adorait associer les formes géométriques à des émotions musicales. Près d\'ici, guette aussi les petits extraterrestres en carreaux de mosaïque (Pixel Art) collés sur les murs !',
                 defiPhoto: 'Prendre une photo de groupe en imitant une œuvre d\'art moderne abstraite ou en mode "Pixel Art".'
             },
@@ -42,7 +33,6 @@
                 lieu: 'Musée du Louvre & Pyramide',
                 devinette: 'Je garde le sourire depuis plus de cinq siècles derrière ma vitre blindée. J\'habite dans un immense ancien palais des rois de France. Qui suis-je ?',
                 reponseExacte: 'La Joconde (Musée du Louvre)',
-                motsCles: ['joconde', 'mona lisa', 'louvre'],
                 anecdote: 'La pyramide de verre du Louvre a été conçue par l\'architecte I. M. Pei. Elle a provoqué un énorme débat à Paris lors de son inauguration en 1989.',
                 defiPhoto: 'Prendre un selfie avec la grimace ou le sourire le plus mystérieux possible devant les pavés.'
             },
@@ -52,7 +42,6 @@
                 lieu: 'Pont des Arts',
                 devinette: 'Je suis une passerelle piétonne en bois et en fer qui offre l\'une des plus belles vues sur la Seine entre l\'Institut de France et le Louvre. Qui suis-je ?',
                 reponseExacte: 'Le Pont des Arts',
-                motsCles: ['pont des arts'],
                 anecdote: 'C\'est le premier pont parisien entièrement réservé aux piétons. De nombreux tournages de films y ont eu lieu.',
                 defiPhoto: 'Faire semblant de porter tout le pont sur vos épaules ou de marcher sur un fil invisible.'
             },
@@ -62,7 +51,6 @@
                 lieu: 'Notre-Dame de Paris (Parvis)',
                 devinette: 'J\'ai survécu à un terrible incendie. Mes gargouilles et mes chimères observent Paris depuis le haut de mes tours gothiques. Qui suis-je ?',
                 reponseExacte: 'Notre-Dame de Paris',
-                motsCles: ['notre dame', 'notre-dame'],
                 anecdote: 'Le roman de Victor Hugo publié en 1831 a sauvé la cathédrale de la destruction totale en émouvant le public.',
                 defiPhoto: 'Imiter une gargouille effrayante ou protectrice en faisant une grimace.'
             },
@@ -72,7 +60,6 @@
                 lieu: 'Jardin du Luxembourg',
                 devinette: 'Pendant des siècles, les enfants y ont fait voguer des bateaux en bois. Une reine d\'origine italienne a commandé ma création. Qui suis-je ?',
                 reponseExacte: 'Le Jardin du Luxembourg',
-                motsCles: ['luxembourg', 'jardin du luxembourg'],
                 anecdote: 'Marie de Médicis voulait retrouver la douceur des jardins florentins de son enfance en faisant bâtir ce domaine.',
                 defiPhoto: 'Faire une photo de groupe en mode "course de bateaux" au bord du grand bassin.'
             },
@@ -82,7 +69,6 @@
                 lieu: 'Champ de Mars / Tour Eiffel',
                 devinette: 'Je suis née pour une exposition universelle. On a failli me démonter après vingt ans, et je suis devenue le symbole mondial de la France. Qui suis-je ?',
                 reponseExacte: 'La Tour Eiffel',
-                motsCles: ['eiffel', 'tour eiffel'],
                 anecdote: 'Gustave Eiffel a inclus un petit bureau secret tout en haut où il aimait s\'isoler pour travailler et admirer la vue.',
                 defiPhoto: 'Faire la célèbre illusion d\'optique où l\'on tient la Tour Eiffel entre le pouce et l\'index.'
             },
@@ -92,374 +78,242 @@
                 lieu: 'Place du Trocadéro',
                 devinette: 'Je me trouve en face de la Tour Eiffel, de l\'autre côté de la Seine, sur une colline qui offre la plus belle vue panoramique pour admirer le monument. Qui suis-je ?',
                 reponseExacte: 'Le Trocadéro',
-                motsCles: ['trocadero', 'trocadéro'],
                 anecdote: 'C\'est l\'endroit historique idéal pour terminer la course en beauté, avec une photo souvenir parfaite avant le goûter !',
                 defiPhoto: 'Sauter en l\'air ensemble en criant "VICTOIRE !" avec la Tour Eiffel en fond.'
             }
         ];
 
-        const Icon = ({ name, className = "w-5 h-5" }) => {
-            useEffect(() => {
-                if (window.lucide && typeof window.lucide.createIcons === 'function') {
-                    window.lucide.createIcons();
-                }
-            }, [name]);
-            return <i data-lucide={name} className={className}></i>;
-        };
+        // Gestion de l'état local
+        let teamCode = localStorage.getItem('pe_team_code') || '';
+        let progress = JSON.parse(localStorage.getItem(`pe_quest_progress_${teamCode}`)) || {};
 
-        const App = () => {
-            const [teamCode, setTeamCode] = useState('');
-            const [inputCode, setInputCode] = useState('');
-            const [enigmes] = useState(ENIGMES_INITIALES);
-            const [progress, setProgress] = useState({}); 
+        function saveState() {
+            if (teamCode) {
+                localStorage.setItem('pe_team_code', teamCode);
+                localStorage.setItem(`pe_quest_progress_${teamCode}`, JSON.stringify(progress));
+            }
+        }
 
-            useEffect(() => {
-                const savedTeam = localStorage.getItem('pe_team_code');
-                if (savedTeam) {
-                    setTeamCode(savedTeam);
-                    loadTeamData(savedTeam);
-                }
-            }, []);
+        function getTotalScore() {
+            return Object.values(progress).reduce((acc, curr) => acc + (curr.points || 0), 0);
+        }
 
-            const loadTeamData = (code) => {
-                const savedProgress = localStorage.getItem(`pe_quest_progress_${code}`);
-                setProgress(savedProgress ? JSON.parse(savedProgress) : {});
-            };
+        function render() {
+            const app = document.getElementById('app');
 
-            const createTeam = () => {
-                const newCode = 'TEAM-' + Math.floor(100 + Math.random() * 900);
-                localStorage.setItem('pe_team_code', newCode);
-                setTeamCode(newCode);
-                saveProgress(newCode, {});
-            };
-
-            const joinTeam = (e) => {
-                e.preventDefault();
-                if (!inputCode.trim()) return;
-                const formatted = inputCode.trim().toUpperCase();
-                localStorage.setItem('pe_team_code', formatted);
-                setTeamCode(formatted);
-                loadTeamData(formatted);
-            };
-
-            const leaveTeam = () => {
-                if (window.confirm("Changer ou quitter cette équipe ?")) {
-                    localStorage.removeItem('pe_team_code');
-                    setTeamCode('');
-                }
-            };
-
-            const saveProgress = (code, newProgress) => {
-                setProgress(newProgress);
-                localStorage.setItem(`pe_quest_progress_${code}`, JSON.stringify(newProgress));
-            };
-
-            const totalScore = Object.values(progress).reduce((acc, curr) => acc + (curr.pointsGagnes || 0), 0);
-
-            const handleTrouverMonument = (item, userText) => {
-                const currentData = progress[item.id] || {};
-                const newProgress = {
-                    ...progress,
-                    [item.id]: {
-                        ...currentData,
-                        saisieText: userText,
-                        monumentTrouve: true,
-                        pointsGagnes: (currentData.pointsGagnes || 0) + 5
-                    }
-                };
-                saveProgress(teamCode, newProgress);
-            };
-
-            const handleAnecdote = (item) => {
-                const currentData = progress[item.id] || {};
-                if (currentData.anecdoteLue) return;
-
-                const newProgress = {
-                    ...progress,
-                    [item.id]: {
-                        ...currentData,
-                        anecdoteLue: true,
-                        pointsGagnes: (currentData.pointsGagnes || 0) + 3
-                    }
-                };
-                saveProgress(teamCode, newProgress);
-            };
-
-            const handlePhoto = (item, file) => {
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    const currentData = progress[item.id] || {};
-                    const bonusPoints = !currentData.photoPrise ? 2 : 0;
-
-                    const newProgress = {
-                        ...progress,
-                        [item.id]: {
-                            ...currentData,
-                            photoData: reader.result,
-                            photoPrise: true,
-                            pointsGagnes: (currentData.pointsGagnes || 0) + bonusPoints
-                        }
-                    };
-                    saveProgress(teamCode, newProgress);
-                };
-                reader.readAsDataURL(file);
-            };
-
-            const handleBonus = (item) => {
-                const currentData = progress[item.id] || {};
-                const isBonus = !currentData.bonusCreativite;
-
-                const newProgress = {
-                    ...progress,
-                    [item.id]: {
-                        ...currentData,
-                        bonusCreativite: isBonus,
-                        pointsGagnes: (currentData.pointsGagnes || 0) + (isBonus ? 2 : -2)
-                    }
-                };
-                saveProgress(teamCode, newProgress);
-            };
-
+            // ÉCRAN 1 : Connexion / Création
             if (!teamCode) {
-                return (
-                    <div className="flex flex-col min-h-screen bg-slate-900 text-white max-w-md mx-auto p-6 justify-center items-center font-sans">
-                        <div className="text-center mb-8">
-                            <span className="text-6xl">✨</span>
-                            <h1 className="text-3xl font-black mt-3 text-amber-400 tracking-tight">PARIS EXPLORATEUR</h1>
-                            <p className="text-amber-200/80 text-xs mt-1 font-bold tracking-widest uppercase">Spécial Enfants (Parcours 2h)</p>
+                app.innerHTML = `
+                    <div class="flex flex-col min-h-screen p-6 justify-center items-center">
+                        <div class="text-center mb-8">
+                            <span class="text-6xl">✨</span>
+                            <h1 class="text-3xl font-black mt-3 text-amber-400 tracking-tight">PARIS EXPLORATEUR</h1>
+                            <p class="text-amber-200/80 text-xs mt-1 font-bold tracking-widest uppercase">Spécial Enfants (Parcours 2h)</p>
                         </div>
 
-                        <div className="w-full bg-slate-800 p-6 rounded-3xl border border-slate-700 shadow-2xl space-y-6">
+                        <div class="w-full bg-slate-800 p-6 rounded-3xl border border-slate-700 shadow-2xl space-y-6">
                             <div>
-                                <h2 className="text-xs font-black uppercase tracking-wider text-slate-400 mb-3">Option A : Créer l'équipe</h2>
-                                <button 
-                                    onClick={createTeam}
-                                    className="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-2xl text-sm transition-all shadow-lg flex items-center justify-center gap-2"
-                                >
-                                    <span>+ CRÉER MON ÉQUIPE</span>
+                                <h2 class="text-xs font-black uppercase tracking-wider text-slate-400 mb-3">Option A : Créer l'équipe</h2>
+                                <button onclick="createTeam()" class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-2xl text-sm transition-all shadow-lg">
+                                    + CRÉER MON ÉQUIPE
                                 </button>
                             </div>
 
-                            <div className="relative flex py-1 items-center">
-                                <div className="flex-grow border-t border-slate-700"></div>
-                                <span className="flex-shrink mx-4 text-xs font-bold text-slate-500 uppercase">OU</span>
+                            <div class="relative flex py-1 items-center">
+                                <div class="flex-grow border-t border-slate-700"></div>
+                                <span class="flex-shrink mx-4 text-xs font-bold text-slate-500 uppercase">OU</span>
                                 <div className="flex-grow border-t border-slate-700"></div>
                             </div>
 
-                            <form onSubmit={joinTeam} className="space-y-3">
-                                <h2 className="text-xs font-black uppercase tracking-wider text-slate-400">Option B : Rejoindre une équipe</h2>
-                                <input 
-                                    type="text"
-                                    placeholder="Code Équipe (ex: TEAM-123)"
-                                    value={inputCode}
-                                    onChange={(e) => setInputCode(e.target.value)}
-                                    className="w-full py-3 px-4 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-amber-400 text-center font-mono font-bold tracking-widest uppercase"
-                                />
-                                <button 
-                                    type="submit"
-                                    className="w-full py-3.5 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl text-sm transition-all"
-                                >
+                            <form onsubmit="joinTeam(event)" class="space-y-3">
+                                <h2 class="text-xs font-black uppercase tracking-wider text-slate-400">Option B : Rejoindre une équipe</h2>
+                                <input id="inputCode" type="text" placeholder="Code Équipe (ex: TEAM-123)" class="w-full py-3 px-4 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-amber-400 text-center font-mono font-bold tracking-widest uppercase" />
+                                <button type="submit" class="w-full py-3.5 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl text-sm transition-all">
                                     REJOINDRE
                                 </button>
                             </form>
                         </div>
                     </div>
-                );
+                `;
+                return;
             }
 
-            return (
-                <div className="flex flex-col min-h-screen bg-slate-900 text-slate-100 max-w-md mx-auto shadow-2xl relative border-x border-slate-800 font-sans">
-                    
-                    <header className="bg-slate-800 pt-8 pb-6 px-6 rounded-b-[2.5rem] border-b border-slate-700/80 shadow-xl relative text-center">
-                        <div className="flex justify-between items-center mb-3">
-                            <span className="bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[10px] font-black tracking-widest px-3 py-1 rounded-full uppercase">
-                                🛡️ {teamCode}
-                            </span>
-                            <button onClick={leaveTeam} className="text-slate-400 hover:text-white text-xs font-bold underline">
-                                Équipe
-                            </button>
-                        </div>
-
-                        <h1 className="text-4xl font-black text-amber-400 my-1 flex items-center justify-center gap-2">
-                            <span>🏆</span> {totalScore} <span className="text-lg font-bold text-white">PTS</span>
-                        </h1>
-                        <p className="text-slate-400 text-xs font-medium">
-                            Parcours Rapide & Ludique (7 étapes)
-                        </p>
-
-                        <div className="mt-4 pt-3 border-t border-slate-700/60 grid grid-cols-4 gap-1 text-[10px] font-bold text-slate-400">
-                            <div>🚇 Lieu <br/><span className="text-amber-400">+5 pts</span></div>
-                            <div>📜 Histoire <br/><span className="text-amber-400">+3 pts</span></div>
-                            <div>📸 Photo <br/><span className="text-amber-400">+2 pts</span></div>
-                            <div>✨ Bonus <br/><span className="text-amber-400">+2 pts</span></div>
-                        </div>
-                    </header>
-
-                    <main className="flex-1 px-4 py-6 space-y-6">
-                        {enigmes.map((item) => {
-                            const pData = progress[item.id] || {};
-                            // Utilisation d'un composant interne ou gestion locale fluide de l'input
-                            return (
-                                <ItemCard 
-                                    key={item.id} 
-                                    item={item} 
-                                    pData={pData} 
-                                    handleTrouverMonument={handleTrouverMonument}
-                                    handleAnecdote={handleAnecdote}
-                                    handlePhoto={handlePhoto}
-                                    handleBonus={handleBonus}
-                                />
-                            );
-                        })}
-                    </main>
-
-                </div>
-            );
-        };
-
-        // Sous-composant pour isoler l'état de l'input et éviter les re-renders globaux sur mobile
-        const ItemCard = ({ item, pData, handleTrouverMonument, handleAnecdote, handlePhoto, handleBonus }) => {
-            const [tempInput, setTempInput] = useState(pData.saisieText || '');
-
-            return (
-                <article className={`p-5 rounded-3xl border transition-all ${
-                    pData.monumentTrouve 
-                        ? 'bg-slate-800/90 border-amber-500/40 shadow-lg' 
-                        : 'bg-slate-800/40 border-slate-700/60'
-                }`}>
-                    <div className="flex justify-between items-center mb-1">
-                        <span className="text-xs font-black text-amber-400 tracking-wider uppercase">
-                            {item.titre}
+            // ÉCRAN 2 : Le Jeu
+            let html = `
+                <header class="bg-slate-800 pt-8 pb-6 px-6 rounded-b-[2.5rem] border-b border-slate-700/80 shadow-xl relative text-center">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[10px] font-black tracking-widest px-3 py-1 rounded-full uppercase">
+                            🛡️ ${teamCode}
                         </span>
-                        <span className="bg-slate-900 border border-slate-700 text-amber-300 font-black text-xs px-2.5 py-1 rounded-xl">
-                            {pData.pointsGagnes || 0} / 12 pts
-                        </span>
-                    </div>
-                    <div className="text-[11px] text-slate-400 font-semibold mb-3 flex items-center gap-1">
-                        <Icon name="map-pin" className="w-3 h-3 text-amber-500" />
-                        <span>{item.lieu}</span>
+                        <button onclick="leaveTeam()" class="text-slate-400 hover:text-white text-xs font-bold underline">
+                            Équipe
+                        </button>
                     </div>
 
-                    <div className="bg-slate-900/80 p-4 rounded-2xl border border-slate-700/50 mb-4">
-                        <div className="flex items-center gap-1.5 text-slate-400 text-[11px] font-bold uppercase tracking-wider mb-2">
-                            <Icon name="subway" className="w-3.5 h-3.5 text-amber-400" />
-                            <span>Énigme (Trajet / Métro)</span>
+                    <h1 class="text-4xl font-black text-amber-400 my-1">
+                        🏆 ${getTotalScore()} <span class="text-lg font-bold text-white">PTS</span>
+                    </h1>
+                    <p class="text-slate-400 text-xs font-medium">Parcours Rapide & Ludique (7 étapes)</p>
+
+                    <div class="mt-4 pt-3 border-t border-slate-700/60 grid grid-cols-4 gap-1 text-[10px] font-bold text-slate-400">
+                        <div>🚇 Lieu <br/><span class="text-amber-400">+5 pts</span></div>
+                        <div>📜 Histoire <br/><span class="text-amber-400">+3 pts</span></div>
+                        <div>📸 Photo <br/><span class="text-amber-400">+2 pts</span></div>
+                        <div>✨ Bonus <br/><span class="text-amber-400">+2 pts</span></div>
+                    </div>
+                </header>
+
+                <main class="flex-1 px-4 py-6 space-y-6">
+            `;
+
+            ENIGMES.forEach(item => {
+                const p = progress[item.id] || {};
+                const isFound = p.monumentTrouve;
+
+                html += `
+                    <article class="p-5 rounded-3xl border transition-all ${isFound ? 'bg-slate-800/90 border-amber-500/40 shadow-lg' : 'bg-slate-800/40 border-slate-700/60'}">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-xs font-black text-amber-400 tracking-wider uppercase">${item.titre}</span>
+                            <span class="bg-slate-900 border border-slate-700 text-amber-300 font-black text-xs px-2.5 py-1 rounded-xl">${p.points || 0} / 12 pts</span>
                         </div>
-                        <p className="text-slate-200 text-xs leading-relaxed italic font-serif">
-                            « {item.devinette} »
-                        </p>
-                    </div>
+                        <div class="text-[11px] text-slate-400 font-semibold mb-3">📍 ${item.lieu}</div>
 
-                    {!pData.monumentTrouve ? (
-                        <div className="space-y-2 mb-4">
-                            <input 
-                                type="text" 
-                                placeholder="Quel est ce lieu / monument ?"
-                                value={tempInput}
-                                onChange={(e) => setTempInput(e.target.value)}
-                                className="w-full text-xs p-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-400"
-                            />
-                            <button 
-                                onClick={() => handleTrouverMonument(item, tempInput)}
-                                className="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition-all"
-                            >
+                        <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-700/50 mb-4">
+                            <div class="text-[11px] font-bold text-amber-400 uppercase tracking-wider mb-2">🚇 Énigme (Trajet / Métro)</div>
+                            <p class="text-slate-200 text-xs leading-relaxed italic font-serif">« ${item.devinette} »</p>
+                        </div>
+                `;
+
+                if (!isFound) {
+                    html += `
+                        <div class="space-y-2 mb-4">
+                            <input id="input_${item.id}" type="text" placeholder="Quel est ce lieu / monument ?" value="${p.saisieText || ''}" class="w-full text-xs p-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-400" />
+                            <button onclick="validerMonument('${item.id}')" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition-all">
                                 Valider le lieu (+5 PTS)
                             </button>
                         </div>
-                    ) : (
-                        <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl mb-4 text-xs">
-                            <span className="font-bold text-amber-400">Lieu identifié :</span>{' '}
-                            <span className="text-white font-bold">{item.reponseExacte}</span>
+                    `;
+                } else {
+                    html += `
+                        <div class="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl mb-4 text-xs">
+                            <span class="font-bold text-amber-400">Lieu identifié :</span> <span class="text-white font-bold">${item.reponseExacte}</span>
                         </div>
-                    )}
+                    `;
 
-                    {pData.monumentTrouve && (
-                        <div className="space-y-4 pt-2 border-t border-slate-700/60">
-                            
-                            <div className="bg-slate-900/50 p-3.5 rounded-2xl border border-slate-700/50 space-y-2">
-                                <div className="flex justify-between items-center">
-                                    <span className="text-[11px] font-bold text-amber-300 uppercase flex items-center gap-1">
-                                        <Icon name="book-open" className="w-3.5 h-3.5" />
-                                        Histoire & Anecdote
-                                    </span>
-                                    {!pData.anecdoteLue ? (
-                                        <button 
-                                            onClick={() => handleAnecdote(item)}
-                                            className="text-[10px] bg-amber-500 text-slate-950 px-2.5 py-1 rounded-lg font-black uppercase"
-                                        >
-                                            Lire (+3 pts)
-                                        </button>
-                                    ) : (
-                                        <span className="text-[10px] text-emerald-400 font-bold">Lue ✓ (+3 pts)</span>
-                                    )}
+                    html += `
+                        <div class="space-y-4 pt-2 border-t border-slate-700/60">
+                            <div class="bg-slate-900/50 p-3.5 rounded-2xl border border-slate-700/50 space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[11px] font-bold text-amber-300 uppercase">📜 Histoire & Anecdote</span>
+                                    ${!p.anecdoteLue ? `<button onclick="validerAnecdote('${item.id}')" class="text-[10px] bg-amber-500 text-slate-950 px-2.5 py-1 rounded-lg font-black uppercase">Lire (+3 pts)</button>` : `<span class="text-[10px] text-emerald-400 font-bold">Lue ✓ (+3 pts)</span>`}
                                 </div>
-                                <p className="text-xs text-slate-300 leading-relaxed">
-                                    {item.anecdote}
-                                </p>
+                                <p class="text-xs text-slate-300 leading-relaxed">${item.anecdote}</p>
                             </div>
 
-                            <div className="bg-slate-900/50 p-3.5 rounded-2xl border border-slate-700/50 space-y-3">
-                                <div className="flex justify-between items-center">
-                                    <span className="text-[11px] font-bold text-amber-300 uppercase flex items-center gap-1">
-                                        <Icon name="camera" className="w-3.5 h-3.5" />
-                                        Défi Photo
-                                    </span>
-                                    {pData.photoPrise && (
-                                        <span className="text-[10px] text-emerald-400 font-bold">Réussi ✓ (+2 pts)</span>
-                                    )}
+                            <div class="bg-slate-900/50 p-3.5 rounded-2xl border border-slate-700/50 space-y-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[11px] font-bold text-amber-300 uppercase">📸 Défi Photo</span>
+                                    ${p.photoPrise ? `<span class="text-[10px] text-emerald-400 font-bold">Réussi ✓ (+2 pts)</span>` : ''}
                                 </div>
-
-                                <p className="text-xs text-slate-300 font-medium">
-                                    📸 <span className="italic">{item.defiPhoto}</span>
-                                </p>
-
-                                <label className="flex items-center justify-center gap-2 py-2.5 px-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 text-xs font-bold rounded-xl cursor-pointer transition-all">
-                                    <Icon name="upload" className="w-4 h-4 text-amber-400" />
-                                    <span>{pData.photoData ? 'Changer la photo' : 'Prendre / Importer la photo (+2 pts)'}</span>
-                                    <input 
-                                        type="file" 
-                                        accept="image/*" 
-                                        capture="environment"
-                                        onChange={(e) => handlePhoto(item, e.target.files[0])}
-                                        className="hidden" 
-                                    />
+                                <p class="text-xs text-slate-300 font-medium">📸 <span class="italic">${item.defiPhoto}</span></p>
+                                
+                                <label class="flex items-center justify-center gap-2 py-2.5 px-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 text-xs font-bold rounded-xl cursor-pointer">
+                                    <span>${p.photoData ? 'Changer la photo' : 'Prendre / Importer la photo (+2 pts)'}</span>
+                                    <input type="file" accept="image/*" capture="environment" onchange="gererPhoto(event, '${item.id}')" class="hidden" />
                                 </label>
-
-                                {pData.photoData && (
-                                    <div className="rounded-xl overflow-hidden max-h-48 border border-slate-700 mt-2">
-                                        <img src={pData.photoData} alt="Défi photo" className="w-full h-full object-cover" />
-                                    </div>
-                                )}
+                                ${p.photoData ? `<div class="rounded-xl overflow-hidden max-h-48 border border-slate-700 mt-2"><img src="${p.photoData}" class="w-full h-full object-cover" /></div>` : ''}
                             </div>
 
-                            <div className="flex justify-between items-center bg-slate-900/30 p-2.5 rounded-xl border border-slate-700/40">
-                                <span className="text-xs text-slate-400 font-medium">✨ Bonus créativité (Arbitre) :</span>
-                                <button 
-                                    onClick={() => handleBonus(item)}
-                                    className={`px-3 py-1 rounded-lg text-xs font-black transition-all ${
-                                        pData.bonusCreativite 
-                                            ? 'bg-emerald-500 text-slate-950' 
-                                            : 'bg-slate-800 text-slate-400 border border-slate-700'
-                                    }`}
-                                >
-                                    {pData.bonusCreativite ? 'Bonus Accordé ! (+2 pts)' : '+2 pts Bonus'}
+                            <div class="flex justify-between items-center bg-slate-900/30 p-2.5 rounded-xl border border-slate-700/40">
+                                <span class="text-xs text-slate-400 font-medium">✨ Bonus créativité (Arbitre) :</span>
+                                <button onclick="toggleBonus('${item.id}')" class="px-3 py-1 rounded-lg text-xs font-black transition-all ${p.bonus ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-400 border border-slate-700'}">
+                                    ${p.bonus ? 'Bonus Accordé ! (+2 pts)' : '+2 pts Bonus'}
                                 </button>
                             </div>
-
                         </div>
-                    )}
-                </article>
-            );
-        };
+                    `;
+                }
 
-        // Montage sécurisé pour mobile
-        window.addEventListener('DOMContentLoaded', () => {
-            const rootElement = document.getElementById('root');
-            if (rootElement) {
-                ReactDOM.createRoot(rootElement).render(<App />);
+                html += `</article>`;
+            });
+
+            html += `</main>`;
+            app.innerHTML = html;
+            if (window.lucide) lucide.createIcons();
+        }
+
+        // Actions utilisateurs
+        function createTeam() {
+            teamCode = 'TEAM-' + Math.floor(100 + Math.random() * 900);
+            progress = {};
+            saveState();
+            render();
+        }
+
+        function joinTeam(e) {
+            e.preventDefault();
+            const val = document.getElementById('inputCode').value.trim();
+            if (!val) return;
+            teamCode = val.toUpperCase();
+            progress = JSON.parse(localStorage.getItem(`pe_quest_progress_${teamCode}`)) || {};
+            saveState();
+            render();
+        }
+
+        function leaveTeam() {
+            if (confirm("Changer ou quitter cette équipe ?")) {
+                localStorage.removeItem('pe_team_code');
+                teamCode = '';
+                progress = {};
+                render();
             }
-        });
+        }
+
+        function validerMonument(id) {
+            const inputVal = document.getElementById(`input_${id}`).value;
+            if (!progress[id]) progress[id] = { points: 0 };
+            progress[id].saisieText = inputVal;
+            progress[id].monumentTrouve = true;
+            progress[id].points = (progress[id].points || 0) + 5;
+            saveState();
+            render();
+        }
+
+        function validerAnecdote(id) {
+            if (progress[id].anecdoteLue) return;
+            progress[id].anecdoteLue = true;
+            progress[id].points = (progress[id].points || 0) + 3;
+            saveState();
+            render();
+        }
+
+        function gererPhoto(e, id) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const isNew = !progress[id].photoPrise;
+                progress[id].photoData = reader.result;
+                if (isNew) {
+                    progress[id].photoPrise = true;
+                    progress[id].points = (progress[id].points || 0) + 2;
+                }
+                saveState();
+                render();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function toggleBonus(id) {
+            const hasBonus = progress[id].bonus;
+            progress[id].bonus = !hasBonus;
+            progress[id].points = (progress[id].points || 0) + (!hasBonus ? 2 : -2);
+            saveState();
+            render();
+        }
+
+        // Lancement initial au chargement de la page
+        window.addEventListener('DOMContentLoaded', render);
     </script>
 </body>
 </html>
