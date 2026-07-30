@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paris Explorer - Énigmes & Monuments</title>
+    <title>Paris Explorer - Carnet de Bord</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- React & ReactDOM -->
@@ -21,180 +21,206 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // Base d'énigmes et défis liés aux monuments parisiens
         const DEFIS_INITIAL = [
-            {
-                id: '1',
-                title: '📐 Le Mystère de la Pyramide',
-                monument: 'Musée du Louvre',
-                desc: 'Compte le nombre de petites pyramides de verre qui entourent la grande Pyramide du Louvre. Multiplie ce nombre par 10 pour trouver les points !',
-                points: 50,
-                target: 'Enfant',
-                reponse: '3'
-            },
-            {
-                id: '2',
-                title: '🦁 Le Secret des Chimères',
-                monument: 'Notre-Dame / Parvis',
-                desc: 'Au kilomètre Zéro de France (devant Notre-Dame), trouve la rosace en bronze au sol. Quelle phrase ou symbole y est gravé ?',
-                points: 40,
-                target: 'Famille',
-            },
-            {
-                id: '3',
-                title: '🧱 Les Rivets de la Tour Eiffel',
-                monument: 'Champs de Mars',
-                desc: 'Ado : Trouve le pilier de la Tour Eiffel où est inscrit le nom d\'un célèbre savant français (ex: Ampère, Eiffel, Fourier...). Prends une photo du nom !',
-                points: 60,
-                target: 'Ado',
-            },
-            {
-                id: '4',
-                title: '⛵ La Flotte du Luxembourg',
-                monument: 'Jardin du Luxembourg',
-                desc: 'Trouve le grand bassin. Combien de voiliers en bois voguent actuellement sur l\'eau ? Fais une course de bateaux en famille !',
-                points: 30,
-                target: 'Enfant',
-            },
-            {
-                id: '5',
-                title: '🎨 Le Mur des Je t\'aime',
-                monument: 'Montmartre (Square Jehan Rictus)',
-                desc: 'Trouve la phrase "Je t\'aime" écrite dans une langue rare ou insolite sur le mur bleu. Écris-la sur un papier !',
-                points: 50,
-                target: 'Famille',
-            },
-            {
-                id: '6',
-                title: '🏛️ L\'Horloge du Temps',
-                monument: 'Musée d\'Orsay',
-                desc: 'Observe la grande horloge dorée sur la façade (ou à l\'intérieur). Quel animal ou sculpture la surmonte ?',
-                points: 40,
-                target: 'Ado',
-            },
-            {
-                id: '7',
-                title: '🐲 Le Dragon du Palais-Royal',
-                monument: 'Jardin du Palais-Royal',
-                desc: 'Trouve les colonnes de Buren. Fais une photo originale où toute la famille est perchée sur des colonnes de hauteurs différentes !',
-                points: 50,
-                target: 'Famille',
-            },
-            {
-                id: '8',
-                title: '🔑 Le Code Caché du Pont des Arts',
-                monument: 'Pont des Arts',
-                desc: 'Trouve un cadenas ou une inscription originale laissée sur le pont avec une date précise. Quel est l\'an le plus ancien ?',
-                points: 40,
-                target: 'Ado',
-            },
-            {
-                id: '9',
-                title: '📜 La Devise de l\'Hôtel de Ville',
-                monument: 'Place de l\'Hôtel de Ville',
-                desc: 'Retrouve les 3 mots de la devise de la France sculptés au-dessus de la porte principale.',
-                points: 30,
-                target: 'Enfant',
-            },
-            {
-                id: '10',
-                title: '📵 Traversée des Tuileries',
-                monument: 'Jardin des Tuileries',
-                desc: 'DÉFI FAMILLE : Marchez de l\'Arc de Triomphe du Carrousel jusqu\'à la Place de la Concorde sans aucun téléphone sorti pendant 20 min !',
-                points: 100,
-                target: 'Famille',
-            },
-            {
-                id: '11',
-                title: '☕ Le Café des Philosophers',
-                monument: 'Saint-Germain-des-Prés',
-                desc: 'L\'Ado doit commander un jus ou un chocolat chaud au serveur du Café de Flore ou Les Deux Magots avec la formule de politesse parfaite.',
-                points: 60,
-                target: 'Ado',
-            },
-            {
-                id: '12',
-                title: '🕊️ L\'Envol de la Fontaine',
-                monument: 'Fontaine St-Michel',
-                desc: 'Quel archange est sculpté en train de terrasser le dragon sur la fontaine géante ?',
-                points: 40,
-                target: 'Enfant',
-            }
+            // PALIER 1
+            { id: '1', palier: 1, title: '📐 Le Mystère de la Pyramide', monument: 'Musée du Louvre', desc: 'Compte le nombre de petites pyramides de verre autour de la grande. Multiplie par 10 pour trouver les points !', points: 50, target: 'Enfant' },
+            { id: '2', palier: 1, title: '🦁 Le Secret des Chimères', monument: 'Notre-Dame / Parvis', desc: 'Au point Zéro (devant Notre-Dame), trouve la rosace en bronze au sol. Quel symbole ou mot y est gravé ?', points: 40, target: 'Famille' },
+            { id: '3', palier: 1, title: '⛵ La Flotte du Luxembourg', monument: 'Jardin du Luxembourg', desc: 'Trouve le grand bassin. Combien de voiliers en bois voguent actuellement ? Fais une course en famille !', points: 30, target: 'Enfant' },
+            { id: '4', palier: 1, title: '📵 Traversée des Tuileries', monument: 'Jardin des Tuileries', desc: 'DÉFI FAMILLE : Marchez de l\'Arc du Carrousel à la Concorde sans aucun téléphone sorti pendant 20 min !', points: 100, target: 'Famille' },
+
+            // PALIER 2
+            { id: '5', palier: 2, title: '🧱 Les Rivets de la Tour Eiffel', monument: 'Champs de Mars', desc: 'Ado : Trouve le pilier où est inscrit le nom d\'un célèbre savant français. Écris son nom et prends une photo !', points: 60, target: 'Ado' },
+            { id: '6', palier: 2, title: '🎨 Le Mur des Je t\'aime', monument: 'Montmartre', desc: 'Trouve la phrase "Je t\'aime" écrite dans une langue rare sur le mur bleu. Écris la langue trouvée !', points: 50, target: 'Famille' },
+            { id: '7', palier: 2, title: '🐲 Colonnes Magiques', monument: 'Palais-Royal', desc: 'Fais une photo originale où toute la famille est perchée sur des colonnes de Buren de hauteurs différentes !', points: 50, target: 'Famille' },
+            { id: '8', palier: 2, title: '🔑 Le Code du Pont des Arts', monument: 'Pont des Arts', desc: 'Trouve un cadenas avec une date précise gravée dessus. Quel est l\'an le plus ancien aperçu ?', points: 40, target: 'Ado' },
+
+            // PALIER 3
+            { id: '9', palier: 3, title: '🏛️ L\'Horloge du Temps', monument: 'Musée d\'Orsay', desc: 'Observe la grande horloge dorée sur la façade. Quel animal ou sculpture la surmonte ?', points: 50, target: 'Ado' },
+            { id: '10', palier: 3, title: '☕ Le Café des Philosophers', monument: 'Saint-Germain-des-Prés', desc: 'L\'Ado doit commander un jus ou chocolat au serveur du Café de Flore avec la formule de politesse parfaite.', points: 60, target: 'Ado' },
+            { id: '11', palier: 3, title: '📜 La Devise Nationale', monument: 'Hôtel de Ville', desc: 'Retrouve les 3 mots de la devise de la France sculptés au-dessus de la porte principale.', points: 40, target: 'Enfant' },
+            { id: '12', palier: 3, title: '🕊️ L\'Envol de la Fontaine', monument: 'Fontaine St-Michel', desc: 'Quel archange est sculpté en train de terrasser le dragon sur la fontaine géante ?', points: 50, target: 'Enfant' }
         ];
 
         const Icon = ({ name, className = "w-5 h-5" }) => {
             useEffect(() => {
-                if (window.lucide) {
-                    window.lucide.createIcons();
-                }
+                if (window.lucide) window.lucide.createIcons();
             }, [name]);
             return <i data-lucide={name} className={className}></i>;
         };
 
         const App = () => {
+            const [teamCode, setTeamCode] = useState('');
+            const [inputCode, setInputCode] = useState('');
             const [defis] = useState(DEFIS_INITIAL);
             const [completed, setCompleted] = useState([]);
             const [score, setScore] = useState(0);
             const [filter, setFilter] = useState('Tous');
 
+            // Formulaire par énigme : { [id]: { response: '', photo: '' } }
+            const [forms, setForms] = useState({});
+            // Réponses sauvegardées : { [id]: { response: '', photo: '' } }
+            const [savedProof, setSavedProof] = useState({});
+
             useEffect(() => {
-                const savedCompleted = localStorage.getItem('pe_monuments_completed');
-                const savedScore = localStorage.getItem('pe_monuments_score');
-                if (savedCompleted) setCompleted(JSON.parse(savedCompleted));
-                if (savedScore) setScore(Number(savedScore));
+                const savedTeam = localStorage.getItem('pe_team_code');
+                if (savedTeam) {
+                    setTeamCode(savedTeam);
+                    loadTeamData(savedTeam);
+                }
             }, []);
 
-            const saveProgress = (newCompleted, newScore) => {
+            const loadTeamData = (code) => {
+                const savedCompleted = localStorage.getItem(`pe_completed_${code}`);
+                const savedScore = localStorage.getItem(`pe_score_${code}`);
+                const savedProofs = localStorage.getItem(`pe_proofs_${code}`);
+
+                setCompleted(savedCompleted ? JSON.parse(savedCompleted) : []);
+                setScore(savedScore ? Number(savedScore) : 0);
+                setSavedProof(savedProofs ? JSON.parse(savedProofs) : {});
+            };
+
+            const createTeam = () => {
+                const newCode = 'PARIS-' + Math.floor(100 + Math.random() * 900);
+                localStorage.setItem('pe_team_code', newCode);
+                setTeamCode(newCode);
+                saveProgress(newCode, [], 0, {});
+            };
+
+            const joinTeam = (e) => {
+                e.preventDefault();
+                if (!inputCode.trim()) return;
+                const formatted = inputCode.trim().toUpperCase();
+                localStorage.setItem('pe_team_code', formatted);
+                setTeamCode(formatted);
+                loadTeamData(formatted);
+            };
+
+            const leaveTeam = () => {
+                if (confirm("Voulez-vous changer ou quitter ce groupe ?")) {
+                    localStorage.removeItem('pe_team_code');
+                    setTeamCode('');
+                }
+            };
+
+            const saveProgress = (code, newCompleted, newScore, newProofs) => {
                 setCompleted(newCompleted);
                 setScore(newScore);
-                localStorage.setItem('pe_monuments_completed', JSON.stringify(newCompleted));
-                localStorage.setItem('pe_monuments_score', newScore.toString());
+                setSavedProof(newProofs);
+                localStorage.setItem(`pe_completed_${code}`, JSON.stringify(newCompleted));
+                localStorage.setItem(`pe_score_${code}`, newScore.toString());
+                localStorage.setItem(`pe_proofs_${code}`, JSON.stringify(newProofs));
+            };
+
+            // Gestion de l'import d'image (compression simple)
+            const handlePhotoUpload = (id, file) => {
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setForms(prev => ({
+                        ...prev,
+                        [id]: { ...prev[id], photo: reader.result }
+                    }));
+                };
+                reader.readAsDataURL(file);
+            };
+
+            const handleTextChange = (id, text) => {
+                setForms(prev => ({
+                    ...prev,
+                    [id]: { ...prev[id], response: text }
+                }));
             };
 
             const validerDefi = (item) => {
                 if (completed.includes(item.id)) return;
+
+                const itemForm = forms[item.id] || {};
+                const newProofs = {
+                    ...savedProof,
+                    [item.id]: {
+                        response: itemForm.response || 'Aucun texte saisi',
+                        photo: itemForm.photo || null
+                    }
+                };
+
                 const newCompleted = [...completed, item.id];
                 const newScore = score + item.points;
-                saveProgress(newCompleted, newScore);
+                saveProgress(teamCode, newCompleted, newScore, newProofs);
             };
 
-            const resetGame = () => {
-                if (confirm("Réinitialiser les scores et énigmes de la famille ?")) {
-                    saveProgress([], 0);
-                }
-            };
+            // ÉCRAN 1 : Connexion
+            if (!teamCode) {
+                return (
+                    <div className="flex flex-col min-h-screen bg-slate-900 text-white max-w-md mx-auto p-6 justify-center items-center font-sans">
+                        <div className="text-center mb-8">
+                            <span className="text-5xl">🗼</span>
+                            <h1 className="text-3xl font-black mt-3 text-amber-400">PARIS EXPLORER</h1>
+                            <p className="text-slate-400 text-xs mt-1">Chasse aux trésors & Carnet de Souvenirs</p>
+                        </div>
 
-            const defisFiltres = defis.filter((d) => {
-                if (filter === 'Tous') return true;
-                return d.target === filter;
-            });
+                        <div className="w-full bg-slate-800 p-6 rounded-3xl border border-slate-700 shadow-xl space-y-6">
+                            <div>
+                                <h2 className="text-sm font-bold uppercase tracking-wider text-slate-300 mb-3">Option A : Créer une équipe</h2>
+                                <button 
+                                    onClick={createTeam}
+                                    className="w-full py-3.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-sm transition-all shadow-lg"
+                                >
+                                    + CRÉER UN NOUVEAU GROUPE
+                                </button>
+                            </div>
 
+                            <div className="relative flex py-1 items-center">
+                                <div className="flex-grow border-t border-slate-700"></div>
+                                <span className="flex-shrink mx-4 text-xs font-bold text-slate-500 uppercase">OU</span>
+                                <div className="flex-grow border-t border-slate-700"></div>
+                            </div>
+
+                            <form onSubmit={joinTeam} className="space-y-3">
+                                <h2 className="text-sm font-bold uppercase tracking-wider text-slate-300">Option B : Rejoindre un groupe</h2>
+                                <input 
+                                    type="text"
+                                    placeholder="Code Groupe (ex: PARIS-123)"
+                                    value={inputCode}
+                                    onChange={(e) => setInputCode(e.target.value)}
+                                    className="w-full py-3 px-4 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-amber-400 text-center font-mono font-bold tracking-widest uppercase"
+                                />
+                                <button 
+                                    type="submit"
+                                    className="w-full py-3 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl text-sm transition-all"
+                                >
+                                    REJOINDRER L'ÉQUIPE
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                );
+            }
+
+            // ÉCRAN 2 : Jeu
             return (
                 <div className="flex flex-col min-h-screen bg-slate-100 max-w-md mx-auto shadow-2xl relative border-x border-slate-200">
                     
                     {/* Header */}
-                    <header className="bg-[#1D3557] text-white pt-10 pb-8 px-6 text-center rounded-b-[2.5rem] shadow-lg relative">
-                        <p className="text-[#A8DADC] text-[11px] font-extrabold tracking-widest uppercase mb-1">
-                            PARIS EXPLORER • MONUMENTS
-                        </p>
-                        <h1 className="text-4xl font-black text-amber-400 my-2 flex items-center justify-center gap-2">
+                    <header className="bg-[#1D3557] text-white pt-8 pb-6 px-6 text-center rounded-b-[2.5rem] shadow-lg relative">
+                        <div className="flex justify-between items-center mb-2">
+                            <span className="bg-white/10 text-amber-300 text-[10px] font-black tracking-widest px-3 py-1 rounded-full uppercase">
+                                👥 GROUPE : {teamCode}
+                            </span>
+                            <button onClick={leaveTeam} className="text-slate-400 hover:text-white text-xs font-bold underline">
+                                Changer
+                            </button>
+                        </div>
+
+                        <h1 className="text-4xl font-black text-amber-400 my-1 flex items-center justify-center gap-2">
                             <span>🏆</span> {score} <span className="text-lg font-bold text-white">PTS</span>
                         </h1>
-                        <p className="text-slate-200 text-xs font-semibold bg-white/10 py-1.5 px-4 rounded-full inline-block mt-1">
-                            {completed.length} / {defis.length} Énigmes résolues
+                        <p className="text-slate-200 text-xs font-semibold">
+                            {completed.length} sur {defis.length} énigmes résolues
                         </p>
-
-                        <button 
-                            onClick={resetGame}
-                            className="absolute top-4 right-4 text-slate-400 hover:text-white p-2"
-                            title="Réinitialiser"
-                        >
-                            <Icon name="rotate-ccw" className="w-4 h-4" />
-                        </button>
                     </header>
 
                     {/* Filtres */}
-                    <nav className="flex justify-around bg-white p-3 shadow-md my-4 mx-4 rounded-2xl border border-slate-100">
+                    <nav className="flex justify-around bg-white p-2.5 shadow-sm my-3 mx-4 rounded-2xl border border-slate-100">
                         {['Tous', 'Ado', 'Enfant', 'Famille'].map((f) => {
                             const isActive = filter === f;
                             const label = f === 'Ado' ? '⚡ Ado' : f === 'Enfant' ? '🎈 Enfant' : f === 'Famille' ? '👨‍👩‍👧‍👦 Famille' : 'Tous';
@@ -202,10 +228,8 @@
                                 <button
                                     key={f}
                                     onClick={() => setFilter(f)}
-                                    className={`py-2 px-3.5 rounded-xl text-xs font-bold transition-all ${
-                                        isActive 
-                                            ? 'bg-[#1D3557] text-white shadow-sm' 
-                                            : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                                    className={`py-1.5 px-3 rounded-xl text-xs font-bold transition-all ${
+                                        isActive ? 'bg-[#1D3557] text-white' : 'bg-slate-100 text-slate-500'
                                     }`}
                                 >
                                     {label}
@@ -214,55 +238,126 @@
                         })}
                     </nav>
 
-                    {/* Liste d'énigmes */}
-                    <main className="flex-1 px-4 pb-12 space-y-4">
-                        {defisFiltres.map((item) => {
-                            const isDone = completed.includes(item.id);
+                    {/* Paliers */}
+                    <main className="flex-1 px-4 pb-12 space-y-6">
+                        {[
+                            { num: 1, title: 'Palier 1 : Découverte', minScore: 0 },
+                            { num: 2, title: 'Palier 2 : Explorateurs', minScore: 100 },
+                            { num: 3, title: 'Palier 3 : Maîtres de Paris', minScore: 250 }
+                        ].map((p) => {
+                            const isUnlocked = score >= p.minScore;
+                            const defisPalier = defis.filter(d => d.palier === p.num && (filter === 'Tous' || d.target === filter));
+
                             return (
-                                <div 
-                                    key={item.id} 
-                                    className={`p-5 rounded-2xl border transition-all ${
-                                        isDone 
-                                            ? 'bg-emerald-50/90 border-emerald-300 shadow-none opacity-80' 
-                                            : 'bg-white border-slate-200 shadow-sm'
-                                    }`}
-                                >
-                                    <div className="flex justify-between items-start gap-3 mb-1">
-                                        <h3 className="font-extrabold text-base text-[#1D3557] leading-snug">
-                                            {item.title}
-                                        </h3>
-                                        <span className="bg-[#E63946] text-white font-black text-xs px-2.5 py-1 rounded-lg shrink-0">
-                                            +{item.points} pts
-                                        </span>
+                                <section key={p.num} className="space-y-3">
+                                    <div className="flex justify-between items-center px-1">
+                                        <h2 className="font-black text-sm text-[#1D3557] uppercase tracking-wider flex items-center gap-1.5">
+                                            <span>{isUnlocked ? '🔓' : '🔒'}</span> {p.title}
+                                        </h2>
+                                        {!isUnlocked && (
+                                            <span className="text-[10px] font-black bg-amber-100 text-amber-800 px-2 py-0.5 rounded-md">
+                                                Requis : {p.minScore} PTS
+                                            </span>
+                                        )}
                                     </div>
 
-                                    <div className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-600 bg-amber-50 px-2.5 py-0.5 rounded-md mb-3 border border-amber-200/60">
-                                        <Icon name="map-pin" className="w-3 h-3" />
-                                        <span>{item.monument}</span>
-                                    </div>
+                                    {!isUnlocked ? (
+                                        <div className="p-4 rounded-2xl bg-slate-200/60 border border-slate-300 text-center py-6">
+                                            <p className="text-xs font-bold text-slate-500">
+                                                Gagnez encore <span className="text-amber-600 font-black">{p.minScore - score} PTS</span> pour débloquer ces énigmes !
+                                            </p>
+                                        </div>
+                                    ) : (
+                                        defisPalier.map((item) => {
+                                            const isDone = completed.includes(item.id);
+                                            const currentForm = forms[item.id] || {};
+                                            const proof = savedProof[item.id];
 
-                                    <p className="text-slate-600 text-xs leading-relaxed mb-4">
-                                        {item.desc}
-                                    </p>
+                                            return (
+                                                <div 
+                                                    key={item.id} 
+                                                    className={`p-4 rounded-2xl border transition-all ${
+                                                        isDone ? 'bg-emerald-50/90 border-emerald-300 shadow-none' : 'bg-white border-slate-200 shadow-sm'
+                                                    }`}
+                                                >
+                                                    <div className="flex justify-between items-start gap-2 mb-1">
+                                                        <h3 className="font-extrabold text-sm text-[#1D3557]">{item.title}</h3>
+                                                        <span className="bg-[#E63946] text-white font-black text-[11px] px-2 py-0.5 rounded-md shrink-0">
+                                                            +{item.points} pts
+                                                        </span>
+                                                    </div>
 
-                                    <div className="flex justify-between items-center pt-3 border-t border-slate-100">
-                                        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                                            Cible : <span className="text-[#1D3557]">{item.target}</span>
-                                        </span>
+                                                    <div className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded mb-2">
+                                                        <Icon name="map-pin" className="w-3 h-3" />
+                                                        <span>{item.monument}</span>
+                                                    </div>
 
-                                        <button
-                                            disabled={isDone}
-                                            onClick={() => validerDefi(item)}
-                                            className={`py-2.5 px-4 rounded-xl font-bold text-xs uppercase tracking-wider transition-transform active:scale-95 ${
-                                                isDone 
-                                                    ? 'bg-[#2A9D8F] text-white cursor-default' 
-                                                    : 'bg-[#1D3557] text-white hover:bg-slate-800 shadow-md shadow-[#1D3557]/20'
-                                            }`}
-                                        >
-                                            {isDone ? 'Résolu ✓' : 'Valider l\'énigme'}
-                                        </button>
-                                    </div>
-                                </div>
+                                                    <p className="text-slate-600 text-xs leading-relaxed mb-3">{item.desc}</p>
+
+                                                    {/* ZONE DE SAISIE OU AFFICHAGE SOUVENIR */}
+                                                    {!isDone ? (
+                                                        <div className="my-3 space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                                            <input 
+                                                                type="text" 
+                                                                placeholder="Écrivez votre réponse ici..."
+                                                                value={currentForm.response || ''}
+                                                                onChange={(e) => handleTextChange(item.id, e.target.value)}
+                                                                className="w-full text-xs p-2.5 rounded-lg border border-slate-300 focus:outline-none focus:border-[#1D3557] bg-white"
+                                                            />
+
+                                                            <div className="flex items-center gap-2">
+                                                                <label className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold rounded-lg cursor-pointer transition-all">
+                                                                    <Icon name="camera" className="w-4 h-4" />
+                                                                    <span>{currentForm.photo ? 'Photo chargée ✓' : 'Ajouter photo preuve'}</span>
+                                                                    <input 
+                                                                        type="file" 
+                                                                        accept="image/*" 
+                                                                        capture="environment"
+                                                                        onChange={(e) => handlePhotoUpload(item.id, e.target.files[0])}
+                                                                        className="hidden" 
+                                                                    />
+                                                                </label>
+                                                            </div>
+
+                                                            {currentForm.photo && (
+                                                                <div className="mt-2 rounded-lg overflow-hidden max-h-32">
+                                                                    <img src={currentForm.photo} alt="Preuve" className="w-full h-full object-cover" />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    ) : (
+                                                        /* AFFICHAGE DE LA PREUVE VALIDÉE */
+                                                        <div className="my-3 p-3 bg-white/80 rounded-xl border border-emerald-200 space-y-2">
+                                                            <div className="text-xs text-slate-700 font-medium">
+                                                                <span className="font-bold text-emerald-800">Votre réponse :</span> {proof?.response}
+                                                            </div>
+                                                            {proof?.photo && (
+                                                                <div className="rounded-lg overflow-hidden max-h-40 border border-slate-200">
+                                                                    <img src={proof.photo} alt="Souvenir" className="w-full h-full object-cover" />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    )}
+
+                                                    <div className="flex justify-between items-center pt-2 border-t border-slate-100">
+                                                        <span className="text-[10px] font-bold text-slate-400 uppercase">
+                                                            Cible : <span className="text-[#1D3557]">{item.target}</span>
+                                                        </span>
+                                                        <button
+                                                            disabled={isDone}
+                                                            onClick={() => validerDefi(item)}
+                                                            className={`py-2 px-4 rounded-lg font-bold text-xs uppercase transition-all ${
+                                                                isDone ? 'bg-[#2A9D8F] text-white cursor-default' : 'bg-[#1D3557] text-white hover:bg-slate-800'
+                                                            }`}
+                                                        >
+                                                            {isDone ? 'Résolu ✓' : 'Valider & Enregistrer'}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })
+                                    )}
+                                </section>
                             );
                         })}
                     </main>
@@ -275,4 +370,3 @@
     </script>
 </body>
 </html>
-
