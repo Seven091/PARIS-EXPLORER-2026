@@ -16,7 +16,6 @@
     </div>
 
     <script>
-        // Sécurité contre les erreurs de localStorage sur mobile
         let storage = {
             getItem(key) {
                 try { return localStorage.getItem(key); } catch(e) { return null; }
@@ -34,64 +33,64 @@
                 id: '1',
                 titre: 'Étape 1 : Le Quartier Moderne',
                 lieu: 'Centre Pompidou / Quartier de l\'Horloge',
-                devinette: 'Je suis célèbre pour mes tuyaux colorés extérieurs. À côté de moi, un automate musical et des œuvres d\'art moderne. Qui suis-je ?',
-                reponseExacte: 'Le Centre Pompidou',
-                anecdote: 'Wassily Kandinsky adorait associer les formes géométriques à des émotions musicales.',
-                defiPhoto: 'Prendre une photo de groupe en imitant une œuvre d\'art moderne.'
+                devinette: 'Je suis célèbre pour mes tuyaux colorés et ma structure inversée où l\'acier et les gaines techniques habillent ma façade. À côté de moi, un automate musical s\'anime régulièrement. Qui suis-je ?',
+                motsCles: ['pompidou', 'centre pompidou', 'beaubourg', 'centrepompidou'],
+                anecdote: 'Inauguré en 1977, ce centre culturel avant-gardiste a été conçu par Renzo Piano et Richard Rogers.',
+                defiPhoto: 'Prendre une photo de groupe en imitant la structure métallique ou les couleurs vives du bâtiment.'
             },
             {
                 id: '2',
                 titre: 'Étape 2 : L\'Ancien Palais des Rois',
                 lieu: 'Musée du Louvre & Pyramide',
-                devinette: 'Je garde le sourire depuis plus de cinq siècles derrière ma vitre blindée. Qui suis-je ?',
-                reponseExacte: 'La Joconde (Musée du Louvre)',
-                anecdote: 'La pyramide de verre du Louvre a été conçue par l\'architecte I. M. Pei en 1989.',
-                defiPhoto: 'Prendre un selfie avec le sourire le plus mystérieux possible.'
+                devinette: 'Je garde le sourire depuis des siècles derrière ma vitre blindée. J\'habite dans un immense palais fortifié qui fut la demeure des rois de France avant de devenir le plus grand musée du monde. Qui suis-je ?',
+                motsCles: ['louvre', 'joconde', 'mona lisa', 'musee du louvre'],
+                anecdote: 'La pyramide de verre du Louvre a été conçue par l\'architecte I. M. Pei et inaugurée en 1989.',
+                defiPhoto: 'Prendre un selfie avec la pose ou le sourire le plus mystérieux possible.'
             },
             {
                 id: '3',
                 titre: 'Étape 3 : Le Pont des Amoureux',
                 lieu: 'Pont des Arts',
-                devinette: 'Je suis une passerelle piétonne en bois et en fer offrant une vue magnifique sur la Seine.',
-                reponseExacte: 'Le Pont des Arts',
-                anecdote: 'C\'est le premier pont parisien entièrement réservé aux piétons.',
-                defiPhoto: 'Faire semblant de porter tout le pont sur vos épaules.'
+                devinette: 'Je suis une passerelle piétonne entièrement réservée aux promeneurs, reliant l\'Institut de France au Musée du Louvre avec une vue imprenable sur la Seine. Qui suis-je ?',
+                motsCles: ['pont des arts', 'passerelle'],
+                anecdote: 'C\'est le tout premier pont métallique parisien, construit au début du XIXe siècle.',
+                defiPhoto: 'Faire semblant de porter tout le pont sur vos épaules ou de marcher sur un fil invisible.'
             },
             {
                 id: '4',
                 titre: 'Étape 4 : Les Gardiens de Pierre',
                 lieu: 'Notre-Dame de Paris (Parvis)',
-                devinette: 'J\'ai survécu à un terrible incendie. Mes gargouilles observent Paris depuis le haut de mes tours.',
-                reponseExacte: 'Notre-Dame de Paris',
-                anecdote: 'Le roman de Victor Hugo en 1831 a sauvé la cathédrale de la destruction.',
-                defiPhoto: 'Imiter une gargouille effrayante ou protectrice.'
+                devinette: 'Je domine le cœur historique de la capitale depuis des siècles avec mon architecture gothique, mes rosaces monumentales et mes gargouilles protectrices. Qui suis-je ?',
+                motsCles: ['notre dame', 'notre-dame', 'cathedrale notre dame', 'notredame'],
+                anecdote: 'Le roman de Victor Hugo publié en 1831 a largement contribué à sauver l\'édifice de la ruine.',
+                defiPhoto: 'Imiter une gargouille effrayante ou protectrice en faisant une grimace.'
             },
             {
                 id: '5',
                 titre: 'Étape 5 : Le Jardin de la Reine',
                 lieu: 'Jardin du Luxembourg',
-                devinette: 'Les enfants y font voguer des bateaux en bois depuis des siècles. Une reine italienne m\'a commandé.',
-                reponseExacte: 'Le Jardin du Luxembourg',
-                anecdote: 'Marie de Médicis voulait retrouver la douceur des jardins florentins.',
-                defiPhoto: 'Faire une photo de groupe en mode course de bateaux.'
+                devinette: 'Je suis un vaste espace vert au cœur de la rive gauche, célèbre pour son grand bassin octogonal où les enfants font voguer des voiliers en bois depuis des générations. Qui suis-je ?',
+                motsCles: ['luxembourg', 'jardin du luxembourg', 'palais du luxembourg'],
+                anecdote: 'Ce jardin a été créé en 1612 à la demande de Marie de Médicis pour accompagner son palais.',
+                defiPhoto: 'Faire une photo de groupe en mode course de bateaux au bord du bassin.'
             },
             {
                 id: '6',
                 titre: 'Étape 6 : Le Géant de Fer',
                 lieu: 'Champ de Mars / Tour Eiffel',
-                devinette: 'Née pour une exposition universelle, je suis devenue le symbole mondial de la France.',
-                reponseExacte: 'La Tour Eiffel',
-                anecdote: 'Gustave Eiffel avait inclus un petit bureau secret tout en haut.',
-                defiPhoto: 'Tenir la Tour Eiffel entre le pouce et l\'index.'
+                devinette: 'Érigée pour une exposition universelle internationale, j\'ai longtemps été la structure la plus haute du monde grâce à ma dentelle de fer forgé. Qui suis-je ?',
+                motsCles: ['tour eiffel', 'eiffel', 'la tour eiffel'],
+                anecdote: 'Gustave Eiffel disposait d\'un petit bureau secret aménagé tout en haut de la structure.',
+                defiPhoto: 'Faire la célèbre illusion d\'optique où l\'on tient le sommet de la tour entre ses doigts.'
             },
             {
                 id: '7',
                 titre: 'Étape 7 : Le Bouquet Final',
                 lieu: 'Place du Trocadéro',
-                devinette: 'Je me trouve en face de la Tour Eiffel sur une colline offrant la plus belle vue panoramique.',
-                reponseExacte: 'Le Trocadéro',
-                anecdote: 'L\'endroit idéal pour terminer la course avant le goûter !',
-                defiPhoto: 'Sauter en l\'air en criant VICTOIRE !'
+                devinette: 'Située sur une colline face à la Seine, je offre l\'une des perspectives panoramiques les plus spectaculaires et photographiées de la capitale. Qui suis-je ?',
+                motsCles: ['trocadero', 'trocadéro', 'palais de chaillot'],
+                anecdote: 'C\'est l\'endroit idéal pour admirer les illuminations de la Dame de Fer à la tombée de la nuit.',
+                defiPhoto: 'Sauter en l\'air ensemble en criant victoire avec la Tour Eiffel en arrière-plan.'
             }
         ];
 
@@ -179,36 +178,59 @@
 
             ENIGMES.forEach(item => {
                 const p = progress[item.id] || {};
-                const isFound = p.monumentTrouve;
+                const isAnswered = p.reponseSoumise !== undefined;
 
                 html += `
-                    <article class="p-5 rounded-3xl border transition-all ${isFound ? 'bg-slate-800/90 border-amber-500/40 shadow-lg' : 'bg-slate-800/40 border-slate-700/60'}">
+                    <article class="p-5 rounded-3xl border transition-all ${isAnswered ? (p.reponseCorrecte ? 'bg-slate-800/90 border-emerald-500/40 shadow-lg' : 'bg-slate-800/90 border-rose-500/40 shadow-lg') : 'bg-slate-800/40 border-slate-700/60'}">
                         <div class="flex justify-between items-center mb-1">
                             <span class="text-xs font-black text-amber-400 tracking-wider uppercase">${item.titre}</span>
                             <span class="bg-slate-900 border border-slate-700 text-amber-300 font-black text-xs px-2.5 py-1 rounded-xl">${p.points || 0} / 12 pts</span>
                         </div>
-                        <div class="text-[11px] text-slate-400 font-semibold mb-3">📍 ${item.lieu}</div>
+                        <div class="text-[11px] text-slate-400 font-semibold mb-3">📍 Zone cible : ${item.lieu}</div>
 
                         <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-700/50 mb-4">
-                            <div class="text-[11px] font-bold text-amber-400 uppercase tracking-wider mb-2">🚇 Énigme</div>
+                            <div class="text-[11px] font-bold text-amber-400 uppercase tracking-wider mb-2">🚇 Énigme / Indice</div>
                             <p class="text-slate-200 text-xs leading-relaxed italic">« ${item.devinette} »</p>
                         </div>
                 `;
 
-                if (!isFound) {
+                if (!isAnswered) {
                     html += `
                         <div class="space-y-2 mb-4">
-                            <input id="input_${item.id}" type="text" placeholder="Quel est ce lieu ?" value="${p.saisieText || ''}" class="w-full text-xs p-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-400" />
-                            <button onclick="validerMonument('${item.id}')" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider">
-                                Valider le lieu (+5 PTS)
-                            </button>
+                            <input id="input_${item.id}" type="text" placeholder="Votre réponse..." value="${p.saisieText || ''}" class="w-full text-xs p-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-400" />
+                            <div class="flex gap-2">
+                                <button onclick="validerReponse('${item.id}')" class="flex-1 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider">
+                                    Valider (+5 pts)
+                                </button>
+                                <button onclick="utiliserJoker('${item.id}')" class="px-3 py-2.5 bg-slate-700 hover:bg-slate-600 text-amber-300 font-bold rounded-xl text-xs uppercase tracking-wider" title="Joker Photo (+2 pts)">
+                                    📸 Joker
+                                </button>
+                            </div>
                         </div>
                     `;
                 } else {
+                    if (p.reponseCorrecte) {
+                        html += `
+                            <div class="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl mb-4 text-xs">
+                                <span class="font-bold text-emerald-400">Bravo ! Bonne réponse (+5 pts)</span>
+                            </div>
+                        `;
+                    } else if (p.jokerUtilise) {
+                        html += `
+                            <div class="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl mb-4 text-xs">
+                                <span class="font-bold text-amber-400">Joker photo activé (+2 pts)</span>
+                            </div>
+                        `;
+                    } else {
+                        html += `
+                            <div class="p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl mb-4 text-xs space-y-1">
+                                <span class="font-bold text-rose-400 block">Mauvaise réponse (0 pt pour le lieu)</span>
+                                <span class="text-slate-400 text-[11px]">Votre saisie : « ${p.saisieText} »</span>
+                            </div>
+                        `;
+                    }
+
                     html += `
-                        <div class="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl mb-4 text-xs">
-                            <span class="font-bold text-amber-400">Trouvé :</span> <span class="text-white font-bold">${item.reponseExacte}</span>
-                        </div>
                         <div class="space-y-4 pt-2 border-t border-slate-700/60">
                             <div class="bg-slate-900/50 p-3.5 rounded-2xl border border-slate-700/50 space-y-2">
                                 <div class="flex justify-between items-center">
@@ -220,7 +242,7 @@
 
                             <div class="bg-slate-900/50 p-3.5 rounded-2xl border border-slate-700/50 space-y-3">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-[11px] font-bold text-amber-300 uppercase">📸 Photo</span>
+                                    <span class="text-[11px] font-bold text-amber-300 uppercase">📸 Défi Photo</span>
                                     ${p.photoPrise ? `<span class="text-[10px] text-emerald-400 font-bold">Réussi ✓</span>` : ''}
                                 </div>
                                 <p class="text-xs text-slate-300 font-medium italic">${item.defiPhoto}</p>
@@ -266,13 +288,37 @@
             }
         }
 
-        function validerMonument(id) {
+        function validerReponse(id) {
             const input = document.getElementById(`input_${id}`);
             if (!input) return;
+            const texteSaisi = input.value.trim().toLowerCase();
+            if (!texteSaisi) return;
+
+            const item = ENIGMES.find(e => e.id === id);
+            const isCorrect = item.motsCles.some(mot => texteSaisi.includes(mot));
+
             if (!progress[id]) progress[id] = { points: 0 };
             progress[id].saisieText = input.value;
-            progress[id].monumentTrouve = true;
-            progress[id].points = (progress[id].points || 0) + 5;
+            progress[id].reponseSoumise = true;
+            progress[id].reponseCorrecte = isCorrect;
+
+            if (isCorrect) {
+                progress[id].points = (progress[id].points || 0) + 5;
+            }
+
+            saveState();
+            render();
+        }
+
+        function utiliserJoker(id) {
+            if (!progress[id]) progress[id] = { points: 0 };
+            progress[id].reponseSoumise = true;
+            progress[id].reponseCorrecte = false;
+            progress[id].jokerUtilise = true;
+            progress[id].saisieText = "Joker Photo activé";
+            // Le joker attribue 2 points au lieu des 5 points de la réponse exacte
+            progress[id].points = (progress[id].points || 0) + 2;
+
             saveState();
             render();
         }
@@ -302,7 +348,6 @@
             reader.readAsDataURL(file);
         }
 
-        // Lancement sécurisé au démarrage
         window.addEventListener('DOMContentLoaded', () => {
             try {
                 render();
