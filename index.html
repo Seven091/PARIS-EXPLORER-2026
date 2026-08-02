@@ -33,9 +33,11 @@
                 id: '1',
                 titre: 'Étape 1 : Le Quartier Moderne',
                 lieuSecret: 'Centre Pompidou / Quartier de l\'Horloge',
-                tempsEstimeMinutes: 15, // Temps de trajet estimé pour cette étape
+                tempsEstimeMinutes: 15,
                 devinette: 'Je suis célèbre pour mes tuyaux colorés et ma structure inversée où l\'acier et les gaines techniques habillent ma façade. À côté de moi, un automate musical s\'anime régulièrement. Qui suis-je ?',
+                questionLocalisation: 'Dans quel quartier piétonnier et animé du 4e arrondissement de Paris, connu pour son plateau aux couleurs primaires, dois-je me rendre pour le trouver ?',
                 motsCles: ['pompidou', 'centre pompidou', 'beaubourg', 'centrepompidou'],
+                motsClesLocalisation: ['beaubourg', 'quartier de l\'horloge', 'horloge', '4e', 'quatrieme'],
                 anecdote: 'Inauguré en 1977, ce centre culturel avant-gardiste a été conçu par Renzo Piano et Richard Rogers.',
                 defiPhoto: 'Prendre une photo de groupe en imitant la structure métallique ou les couleurs vives du bâtiment.'
             },
@@ -45,7 +47,9 @@
                 lieuSecret: 'Musée du Louvre & Pyramide',
                 tempsEstimeMinutes: 20,
                 devinette: 'Je garde le sourire depuis des siècles derrière ma vitre blindée. J\'habite dans un immense palais fortifié qui fut la demeure des rois de France avant de devenir le plus grand musée du monde. Qui suis-je ?',
+                questionLocalisation: 'Quel célèbre monument de verre moderne marque l\'entrée principale de ce palais royal situé au bord de la Seine ?',
                 motsCles: ['louvre', 'joconde', 'mona lisa', 'musee du louvre'],
+                motsClesLocalisation: ['pyramide', 'cour napoleon', 'rivoli', 'palais royal'],
                 anecdote: 'La pyramide de verre du Louvre a été conçue par l\'architecte I. M. Pei et inaugurée en 1989.',
                 defiPhoto: 'Prendre un selfie avec la pose ou le sourire le plus mystérieux possible.'
             },
@@ -56,6 +60,7 @@
                 tempsEstimeMinutes: 15,
                 devinette: 'Je suis une passerelle piétonne entièrement réservée aux promeneurs, reliant l\'Institut de France au Musée du Louvre avec une vue imprenable sur la Seine. Qui suis-je ?',
                 motsCles: ['pont des arts', 'passerelle'],
+                motsClesLocalisation: ['institut de france', 'quai de conti', 'quai du louvre', 'seine'],
                 anecdote: 'C\'est le tout premier pont métallique parisien, construit au début du XIXe siècle.',
                 defiPhoto: 'Faire semblant de porter tout le pont sur vos épaules ou de marcher sur un fil invisible.'
             },
@@ -66,6 +71,7 @@
                 tempsEstimeMinutes: 25,
                 devinette: 'Je domine le cœur historique de la capitale depuis des siècles avec mon architecture gothique, mes rosaces monumentales et mes gargouilles protectrices. Qui suis-je ?',
                 motsCles: ['notre dame', 'notre-dame', 'cathedrale notre dame', 'notredame'],
+                motsClesLocalisation: ['ile de la cite', 'parvis', 'cite', 'quatorzieme arrondissement', '4e'],
                 anecdote: 'Le roman de Victor Hugo publié en 1831 a largement contribué à sauver l\'édifice de la ruine.',
                 defiPhoto: 'Imiter une gargouille effrayante ou protectrice en faisant une grimace.'
             },
@@ -76,6 +82,7 @@
                 tempsEstimeMinutes: 25,
                 devinette: 'Je suis un vaste espace vert au cœur de la rive gauche, célèbre pour son grand bassin octogonal où les enfants font voguer des voiliers en bois depuis des générations. Qui suis-je ?',
                 motsCles: ['luxembourg', 'jardin du luxembourg', 'palais du luxembourg'],
+                motsClesLocalisation: ['rive gauche', '6e', 'boulevard saint michel', 'senat'],
                 anecdote: 'Ce jardin a été créé en 1612 à la demande de Marie de Médicis pour accompagner son palais.',
                 defiPhoto: 'Faire une photo de groupe en mode course de bateaux au bord du bassin.'
             },
@@ -86,6 +93,7 @@
                 tempsEstimeMinutes: 30,
                 devinette: 'Érigée pour une exposition universelle internationale, j\'ai longtemps été la structure la plus haute du monde grâce à ma dentelle de fer forgé. Qui suis-je ?',
                 motsCles: ['tour eiffel', 'eiffel', 'la tour eiffel'],
+                motsClesLocalisation: ['champ de mars', '7e', 'pont d\'iena', 'quai branly'],
                 anecdote: 'Gustave Eiffel disposait d\'un petit bureau secret aménagé tout en haut de la structure.',
                 defiPhoto: 'Faire la célèbre illusion d\'optique où l\'on tient le sommet de la tour entre ses doigts.'
             },
@@ -96,6 +104,7 @@
                 tempsEstimeMinutes: 15,
                 devinette: 'Située sur une colline face à la Seine, je offre l\'une des perspectives panoramiques les plus spectaculaires et photographiées de la capitale. Qui suis-je ?',
                 motsCles: ['trocadero', 'trocadéro', 'palais de chaillot'],
+                motsClesLocalisation: ['colline de chaillot', '16e', 'palais de chaillot', 'place'],
                 anecdote: 'C\'est l\'endroit idéal pour admirer les illuminations de la Dame de Fer à la tombée de la nuit.',
                 defiPhoto: 'Sauter en l\'air ensemble en criant victoire avec la Tour Eiffel en arrière-plan.'
             }
@@ -104,7 +113,7 @@
         let teamCode = storage.getItem('pe_team_code') || '';
         let progress = {};
         let currentStepIndex = 0;
-        let stepTimers = {}; // Pour gérer les temps de trajet par étape
+        let stepTimers = {};
 
         function loadTeamState() {
             try {
@@ -133,27 +142,23 @@
             return Object.values(progress).reduce((acc, curr) => acc + (curr.points || 0), 0);
         }
 
-        // Détermine l'étape active actuelle (la première non entièrement validée/complétée)
         function updateCurrentStepIndex() {
             for (let i = 0; i < ENIGMES.length; i++) {
                 const p = progress[ENIGMES[i].id] || {};
-                // Une étape est complète si la réponse est traitée ET la photo est prise
                 if (!p.etapeCompletee) {
                     currentStepIndex = i;
                     initTimerForStep(ENIGMES[i].id, ENIGMES[i].tempsEstimeMinutes);
                     return;
                 }
             }
-            currentStepIndex = ENIGMES.length - 1; // Fin du parcours
+            currentStepIndex = ENIGMES.length - 1;
         }
 
         function initTimerForStep(stepId, durationMinutes) {
             if (!stepTimers[stepId]) {
-                // Temps de trajet + 5 minutes de battement à l'arrivée
                 const totalMs = (durationMinutes + 5) * 60 * 1000;
                 stepTimers[stepId] = {
-                    deadline: Date.now() + totalMs,
-                    expired: false
+                    deadline: Date.now() + totalMs
                 };
                 saveState();
             }
@@ -223,7 +228,6 @@
                 <main class="flex-1 px-4 py-6 space-y-6">
             `;
 
-            // Si toutes les étapes sont complétées
             if (currentStepIndex >= ENIGMES.length - 1 && progress[ENIGMES[ENIGMES.length - 1].id]?.etapeCompletee) {
                 html += `
                     <div class="bg-slate-800/90 border border-amber-500 p-6 rounded-3xl text-center space-y-4 shadow-2xl">
@@ -234,13 +238,11 @@
                     </div>
                 `;
             } else {
-                // Affichage unique de l'étape active actuelle
                 const item = ENIGMES[currentStepIndex];
                 const p = progress[item.id] || {};
-                const isAnswered = p.reponseSoumise !== undefined;
+                const isAnswered = p.reponseSoumise === true;
                 const timerData = stepTimers[item.id] || { deadline: Date.now() + 100000 };
                 
-                // Calcul du temps restant
                 const timeLeftMs = timerData.deadline - Date.now();
                 const timeLeftMin = Math.max(0, Math.ceil(timeLeftMs / 60000));
 
@@ -251,51 +253,69 @@
                             <span class="bg-slate-900 border border-slate-700 text-amber-300 font-black text-xs px-2.5 py-1 rounded-xl">${p.points || 0} pts</span>
                         </div>
 
-                        <!-- Gestion du temps de trajet -->
                         <div class="flex items-center justify-between bg-slate-900/60 px-3 py-2 rounded-xl border border-slate-700/50 text-[11px]">
-                            <span class="text-slate-400">⏳ Fenêtre de validité :</span>
-                            <span class="font-bold text-amber-300">${timeLeftMin > 0 ? timeLeftMin + ' min restantes' : 'Temps réglementaire dépassé (accessible)'}</span>
+                            <span class="text-slate-400">⏳ Fenêtre de trajet :</span>
+                            <span class="font-bold text-amber-300">${timeLeftMin > 0 ? timeLeftMin + ' min restantes' : 'Temps réglementaire dépassé'}</span>
                         </div>
 
-                        <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-700/50">
-                            <div class="text-[11px] font-bold text-amber-400 uppercase tracking-wider mb-2">🚇 Énigme / Indice mystère</div>
-                            <p class="text-slate-200 text-xs leading-relaxed italic">« ${item.devinette} »</p>
+                        <!-- Énigme principale sur le monument -->
+                        <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-700/50 space-y-3">
+                            <div>
+                                <div class="text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-1">1. Devinette de l'objet ou monument</div>
+                                <p class="text-slate-200 text-xs leading-relaxed italic">« ${item.devinette} »</p>
+                            </div>
+                            <div>
+                                <div class="text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-1">2. Question de localisation de la zone</div>
+                                <p class="text-slate-300 text-xs leading-relaxed">« ${item.questionLocalisation} »</p>
+                            </div>
                         </div>
                 `;
 
-                // Phase 1 : Résolution de l'énigme (La zone cible reste secrète)
                 if (!isAnswered) {
                     html += `
-                        <div class="space-y-2">
-                            <input id="input_${item.id}" type="text" placeholder="Votre réponse (nom du lieu)..." value="${p.saisieText || ''}" class="w-full text-xs p-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-400" />
-                            <div class="flex gap-2">
-                                <button onclick="validerReponse('${item.id}')" class="flex-1 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider">
-                                    Valider (+5 pts)
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Votre réponse (Monument / Objet)</label>
+                                <input id="input_monument_${item.id}" type="text" placeholder="Ex: Tour Eiffel..." value="${p.saisieMonument || ''}" class="w-full text-xs p-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-400" />
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Votre réponse (Localisation / Zone)</label>
+                                <input id="input_localisation_${item.id}" type="text" placeholder="Ex: Champ de mars..." value="${p.saisieLocalisation || ''}" class="w-full text-xs p-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-400" />
+                            </div>
+
+                            <div class="flex gap-2 pt-1">
+                                <button onclick="validerReponse('${item.id}')" class="flex-1 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider shadow-md">
+                                    ✓ Soumettre et Valider
                                 </button>
-                                <button onclick="utiliserJoker('${item.id}')" class="px-3.5 py-2.5 bg-slate-700 hover:bg-slate-600 text-amber-300 font-bold rounded-xl text-xs uppercase tracking-wider" title="Joker Photo (+2 pts)">
-                                    📸 Joker
+                                <button onclick="utiliserJoker('${item.id}')" class="px-3.5 py-3 bg-slate-700 hover:bg-slate-600 text-amber-300 font-bold rounded-xl text-xs uppercase tracking-wider" title="Joker Photo (Points partiels)">
+                                    📸 Joker Photo
                                 </button>
                             </div>
                         </div>
                     `;
                 } else {
-                    // Résultat de la réponse
                     if (p.reponseCorrecte) {
                         html += `
                             <div class="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs">
-                                <span class="font-bold text-emerald-400">Lieu trouvé ! Zone : <span class="text-white">${item.lieuSecret}</span> (+5 pts)</span>
+                                <span class="font-bold text-emerald-400">Bonne réponse ! Zone débloquée : <span class="text-white">${item.lieuSecret}</span> (+6 pts)</span>
                             </div>
                         `;
-                    } else {
+                    } else if (p.jokerUtilise) {
                         html += `
                             <div class="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs space-y-1">
                                 <span class="font-bold text-amber-400">Joker Photo activé (+2 pts)</span>
                                 <div class="text-slate-300">Zone cible débloquée : <span class="text-white font-bold">${item.lieuSecret}</span></div>
                             </div>
                         `;
+                    } else {
+                        html += `
+                            <div class="p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-xs space-y-1">
+                                <span class="font-bold text-rose-400 block">Réponses incorrectes (0 pt pour cette étape)</span>
+                                <span class="text-slate-400 text-[10px]">Mais vous pouvez continuer le jeu et valider le défi photo !</span>
+                            </div>
+                        `;
                     }
 
-                    // Phase 2 : Histoire & Défi Photo (requis pour valider l'étape et passer à la suite)
                     html += `
                         <div class="space-y-4 pt-2 border-t border-slate-700/60">
                             <div class="bg-slate-900/50 p-3.5 rounded-2xl border border-slate-700/50 space-y-2">
@@ -308,7 +328,7 @@
 
                             <div class="bg-slate-900/50 p-3.5 rounded-2xl border border-slate-700/50 space-y-3">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-[11px] font-bold text-amber-300 uppercase">📸 Défi Photo (Requis)</span>
+                                    <span class="text-[11px] font-bold text-amber-300 uppercase">📸 Défi Photo (Finalisation)</span>
                                     ${p.photoPrise ? `<span class="text-[10px] text-emerald-400 font-bold">Validé ✓ (+2 pts)</span>` : ''}
                                 </div>
                                 <p class="text-xs text-slate-300 font-medium italic">${item.defiPhoto}</p>
@@ -353,21 +373,30 @@
         }
 
         function validerReponse(id) {
-            const input = document.getElementById(`input_${id}`);
-            if (!input) return;
-            const texteSaisi = input.value.trim().toLowerCase();
-            if (!texteSaisi) return;
+            const inputMon = document.getElementById(`input_monument_${id}`);
+            const inputLoc = document.getElementById(`input_localisation_${id}`);
+            if (!inputMon || !inputLoc) return;
+
+            const textMon = inputMon.value.trim().toLowerCase();
+            const textLoc = inputLoc.value.trim().toLowerCase();
+            if (!textMon && !textLoc) return;
 
             const item = ENIGMES.find(e => e.id === id);
-            const isCorrect = item.motsCles.some(mot => texteSaisi.includes(mot));
+            const isMonCorrect = item.motsCles.some(mot => textMon.includes(mot));
+            const isLocCorrect = item.motsClesLocalisation.some(mot => textLoc.includes(mot));
+            
+            // Les deux doivent être justes pour avoir les points complets de la réponse
+            const isCorrect = isMonCorrect && isLocCorrect;
 
             if (!progress[id]) progress[id] = { points: 0 };
-            progress[id].saisieText = input.value;
+            progress[id].saisieMonument = inputMon.value;
+            progress[id].saisieLocalisation = inputLoc.value;
             progress[id].reponseSoumise = true;
             progress[id].reponseCorrecte = isCorrect;
+            progress[id].jokerUtilise = false;
 
             if (isCorrect) {
-                progress[id].points = (progress[id].points || 0) + 5;
+                progress[id].points = (progress[id].points || 0) + 6;
             }
 
             saveState();
@@ -379,8 +408,9 @@
             progress[id].reponseSoumise = true;
             progress[id].reponseCorrecte = false;
             progress[id].jokerUtilise = true;
-            progress[id].saisieText = "Joker Photo activé";
-            progress[id].points = (progress[id].points || 0) + 2; // Attribue les points partiels du joker
+            progress[id].saisieMonument = "Joker Photo activé";
+            progress[id].saisieLocalisation = "Joker Photo activé";
+            progress[id].points = (progress[id].points || 0) + 2; // Points partiels du joker
 
             saveState();
             render();
@@ -408,7 +438,7 @@
                     progress[id].points = (progress[id].points || 0) + 2;
                 }
 
-                // La nouvelle carte s'affiche uniquement après sauvegarde de la photo (si réponse ou joker joués)
+                // Déverrouillage de l'étape suivante après soumission de la réponse (ou joker) ET sauvegarde de la photo
                 if (progress[id].reponseSoumise && progress[id].photoPrise) {
                     progress[id].etapeCompletee = true;
                 }
