@@ -35,6 +35,7 @@
                 lieuSecret: 'Centre Pompidou / Quartier de l\'Horloge',
                 tempsEstimeMinutes: 15,
                 questionZone: 'Dans quel quartier piétonnier et animé du 4e arrondissement, connu pour son plateau aux couleurs primaires, dois-je me rendre ?',
+                reponseZoneIndiquee: 'Beaubourg / Quartier de l\'Horloge (4e)',
                 devinette: 'Je suis célèbre pour mes tuyaux colorés et ma structure inversée où l\'acier et les gaines techniques habillent ma façade. Qui suis-je ?',
                 motsClesZone: ['beaubourg', 'horloge', '4e', 'quatrieme', 'plateau'],
                 motsClesObjet: ['pompidou', 'centre pompidou', 'centrepompidou'],
@@ -47,6 +48,7 @@
                 lieuSecret: 'Musée du Louvre & Pyramide',
                 tempsEstimeMinutes: 20,
                 questionZone: 'Quel célèbre monument de verre moderne marque l\'entrée principale de ce palais royal situé au bord de la Seine ?',
+                reponseZoneIndiquee: 'Pyramide de verre / Cour Napoléon',
                 devinette: 'Je garde le sourire depuis des siècles derrière ma vitre blindée. J\'habite dans un immense palais fortifié qui fut la demeure des rois de France. Qui suis-je ?',
                 motsClesZone: ['pyramide', 'cour napoleon', 'rivoli'],
                 motsClesObjet: ['louvre', 'joconde', 'mona lisa', 'musee du louvre'],
@@ -59,6 +61,7 @@
                 lieuSecret: 'Pont des Arts',
                 tempsEstimeMinutes: 15,
                 questionZone: 'Quel quai de la rive gauche permet d\'accéder directement à cette passerelle piétonne ?',
+                reponseZoneIndiquee: 'Quai de Conti',
                 devinette: 'Je suis une passerelle piétonne entièrement réservée aux promeneurs, reliant l\'Institut de France au Musée du Louvre. Qui suis-je ?',
                 motsClesZone: ['quai de conti', 'conti', 'institut de france'],
                 motsClesObjet: ['pont des arts', 'passerelle'],
@@ -71,6 +74,7 @@
                 lieuSecret: 'Notre-Dame de Paris (Parvis)',
                 tempsEstimeMinutes: 25,
                 questionZone: 'Sur quelle île naturelle de la Seine, berceau historique de Paris, dois-je poser mes pas ?',
+                reponseZoneIndiquee: 'Île de la Cité (Parvis)',
                 devinette: 'Je domine le cœur historique de la capitale depuis des siècles avec mon architecture gothique et mes gargouilles. Qui suis-je ?',
                 motsClesZone: ['ile de la cite', 'cite', 'parvis'],
                 motsClesObjet: ['notre dame', 'notre-dame', 'cathedrale', 'notredame'],
@@ -83,6 +87,7 @@
                 lieuSecret: 'Jardin du Luxembourg',
                 tempsEstimeMinutes: 25,
                 questionZone: 'Quel grand boulevard de la rive gauche longe ce jardin historique créé par Marie de Médicis ?',
+                reponseZoneIndiquee: 'Boulevard Saint-Michel / Rue de Médicis',
                 devinette: 'Je suis un vaste espace vert célèbre pour son grand bassin octogonal où les enfants font voguer des voiliers. Qui suis-je ?',
                 motsClesZone: ['saint michel', 'boulevard saint michel', 'medicis', 'senat'],
                 motsClesObjet: ['luxembourg', 'jardin du luxembourg', 'palais du luxembourg'],
@@ -95,6 +100,7 @@
                 lieuSecret: 'Champ de Mars / Tour Eiffel',
                 tempsEstimeMinutes: 30,
                 questionZone: 'Sur quel vaste espace vert s\'étend le pied de cette grande dame de fer ?',
+                reponseZoneIndiquee: 'Champ de Mars',
                 devinette: 'Érigée pour une exposition universelle internationale, j\'ai longtemps été la structure la plus haute du monde. Qui suis-je ?',
                 motsClesZone: ['champ de mars', 'mars', 'pont d iena'],
                 motsClesObjet: ['tour eiffel', 'eiffel', 'tour'],
@@ -107,6 +113,7 @@
                 lieuSecret: 'Place du Trocadéro',
                 tempsEstimeMinutes: 15,
                 questionZone: 'Quel célèbre palais abritant des musées se dresse sur cette esplanade panoramique ?',
+                reponseZoneIndiquee: 'Palais de Chaillot / Esplanade du Trocadéro',
                 devinette: 'Située sur une colline face à la Seine, j\'offre l\'une des perspectives panoramiques les plus photographiées. Qui suis-je ?',
                 motsClesZone: ['chaillot', 'palais de chaillot', 'esplanade'],
                 motsClesObjet: ['trocadero', 'trocadéro'],
@@ -302,21 +309,26 @@
                             <span class="font-bold text-amber-300">${timeLeftMin > 0 ? timeLeftMin + ' min restantes' : 'Temps réglementaire dépassé'}</span>
                         </div>
 
-                        <!-- 1. QUESTION DE LOCALISATION (AVEC DÉBLOQUAGE AUTOMATIQUE AU BOUT DE 3 ÉCHECS) -->
+                        <!-- 1. QUESTION DE LOCALISATION (DÉBLOCAGE SANS POINTS AU BOUT DE 3 ÉCHECS) -->
                         <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-700/50 space-y-2">
                             <div class="text-[10px] font-bold text-amber-400 uppercase tracking-wider">📍 1. Question de Localisation Géographique (3 pts)</div>
                             <p class="text-slate-200 text-xs leading-relaxed">« ${item.questionZone} »</p>
                             
                             ${p.zoneValidee ? `
                                 <div class="p-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-[11px] text-emerald-400 font-bold">
-                                    ${p.zoneDebloqueeAutomatiquement ? 'Zone débloquée automatiquement après 3 échecs ✓' : 'Zone validée ✓'} (+3 pts)
+                                    Zone validée ✓ (+3 pts)
+                                </div>
+                            ` : p.zoneDebloqueeAutomatiquement ? `
+                                <div class="p-2 bg-amber-500/10 border border-amber-500/30 rounded-xl text-[11px] text-amber-300 font-bold space-y-1">
+                                    <div>⚠️ 3 échecs atteints. Réponse affichée (0 pt attribué) :</div>
+                                    <div class="text-white font-mono">${item.reponseZoneIndiquee}</div>
                                 </div>
                             ` : `
                                 <div class="space-y-2 pt-1">
                                     <input id="input_zone_${item.id}" type="text" placeholder="Votre réponse géographique..." value="${p.saisieZone || ''}" class="w-full text-xs p-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-amber-400" />
                                     <div class="flex justify-between items-center text-[10px] text-slate-400 px-1">
                                         <span>Tentatives échouées : ${p.tentativesZone || 0}/3</span>
-                                        <span class="text-amber-300 font-bold">${essaisRestants > 0 ? essaisRestants + ' essai(s) avant déblocage auto' : 'Déblocage en cours...'}</span>
+                                        <span class="text-amber-300 font-bold">${essaisRestants > 0 ? essaisRestants + ' essai(s) avant affichage de la réponse' : ''}</span>
                                     </div>
                                     <button onclick="validerZone('${item.id}')" class="w-full py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider">
                                         Valider la Zone (+3 pts)
@@ -350,7 +362,7 @@
                         </div>
                 `;
 
-                if (p.zoneValidee || p.objetValide || p.jokerUtilise) {
+                if (p.zoneValidee || p.zoneDebloqueeAutomatiquement || p.objetValide || p.jokerUtilise) {
                     html += `
                         <div class="space-y-4 pt-2 border-t border-slate-700/60">
                             <!-- 3. HISTOIRE -->
@@ -430,12 +442,10 @@
             } else {
                 progress[id].tentativesZone = (progress[id].tentativesZone || 0) + 1;
                 
-                // Règle des 3 échecs : Déblocage automatique de la zone géographique
+                // Règle des 3 échecs : Affichage automatique de la réponse sans attribution de points
                 if (progress[id].tentativesZone >= 3) {
-                    progress[id].zoneValidee = true;
                     progress[id].zoneDebloqueeAutomatiquement = true;
-                    progress[id].points = (progress[id].points || 0) + 3;
-                    alert("3 erreurs enregistrées. La réponse géographique a été automatiquement validée pour vous permettre de progresser !");
+                    alert("3 erreurs enregistrées. La réponse géographique vous est affichée pour vous permettre de progresser (aucun point attribué pour cette question).");
                 } else {
                     alert(`Réponse géographique incorrecte (${progress[id].tentativesZone}/3 échecs). Réessayez !`);
                 }
