@@ -16,6 +16,7 @@
     </div>
 
     <script>
+        // Système de stockage local sécurisé pour la synchronisation par code d'équipe
         let storage = {
             getItem(key) {
                 try { return localStorage.getItem(key); } catch(e) { return null; }
@@ -35,9 +36,9 @@
                 lieuSecret: 'Centre Pompidou / Quartier de l\'Horloge',
                 tempsEstimeMinutes: 15,
                 devinette: 'Je suis célèbre pour mes tuyaux colorés et ma structure inversée où l\'acier et les gaines techniques habillent ma façade. À côté de moi, un automate musical s\'anime régulièrement. Qui suis-je ?',
-                questionLocalisation: 'Dans quel quartier piétonnier et animé du 4e arrondissement de Paris, connu pour son plateau aux couleurs primaires, dois-je me rendre pour le trouver ?',
+                questionZone: 'Dans quel quartier piétonnier et animé du 4e arrondissement, connu pour son plateau aux couleurs primaires, dois-je me rendre pour le trouver ?',
                 motsCles: ['pompidou', 'centre pompidou', 'beaubourg', 'centrepompidou'],
-                motsClesLocalisation: ['beaubourg', 'quartier de l\'horloge', 'horloge', '4e', 'quatrieme'],
+                motsClesZone: ['beaubourg', 'horloge', '4e', 'quatrieme', 'plateau'],
                 anecdote: 'Inauguré en 1977, ce centre culturel avant-gardiste a été conçu par Renzo Piano et Richard Rogers.',
                 defiPhoto: 'Prendre une photo de groupe en imitant la structure métallique ou les couleurs vives du bâtiment.'
             },
@@ -47,9 +48,9 @@
                 lieuSecret: 'Musée du Louvre & Pyramide',
                 tempsEstimeMinutes: 20,
                 devinette: 'Je garde le sourire depuis des siècles derrière ma vitre blindée. J\'habite dans un immense palais fortifié qui fut la demeure des rois de France avant de devenir le plus grand musée du monde. Qui suis-je ?',
-                questionLocalisation: 'Quel célèbre monument de verre moderne marque l\'entrée principale de ce palais royal situé au bord de la Seine ?',
+                questionZone: 'Quel célèbre monument de verre moderne marque l\'entrée principale de ce palais royal situé au bord de la Seine ?',
                 motsCles: ['louvre', 'joconde', 'mona lisa', 'musee du louvre'],
-                motsClesLocalisation: ['pyramide', 'cour napoleon', 'rivoli', 'palais royal'],
+                motsClesZone: ['pyramide', 'cour napoleon', 'rivoli'],
                 anecdote: 'La pyramide de verre du Louvre a été conçue par l\'architecte I. M. Pei et inaugurée en 1989.',
                 defiPhoto: 'Prendre un selfie avec la pose ou le sourire le plus mystérieux possible.'
             },
@@ -59,8 +60,9 @@
                 lieuSecret: 'Pont des Arts',
                 tempsEstimeMinutes: 15,
                 devinette: 'Je suis une passerelle piétonne entièrement réservée aux promeneurs, reliant l\'Institut de France au Musée du Louvre avec une vue imprenable sur la Seine. Qui suis-je ?',
+                questionZone: 'Quel quai de la rive gauche permet d\'accéder directement à cette passerelle piétonne ?',
                 motsCles: ['pont des arts', 'passerelle'],
-                motsClesLocalisation: ['institut de france', 'quai de conti', 'quai du louvre', 'seine'],
+                motsClesZone: ['quai de conti', 'institut de france', 'conti'],
                 anecdote: 'C\'est le tout premier pont métallique parisien, construit au début du XIXe siècle.',
                 defiPhoto: 'Faire semblant de porter tout le pont sur vos épaules ou de marcher sur un fil invisible.'
             },
@@ -70,8 +72,9 @@
                 lieuSecret: 'Notre-Dame de Paris (Parvis)',
                 tempsEstimeMinutes: 25,
                 devinette: 'Je domine le cœur historique de la capitale depuis des siècles avec mon architecture gothique, mes rosaces monumentales et mes gargouilles protectrices. Qui suis-je ?',
+                questionZone: 'Sur quelle île naturelle de la Seine, berceau historique de Paris, dois-je poser mes pas ?',
                 motsCles: ['notre dame', 'notre-dame', 'cathedrale notre dame', 'notredame'],
-                motsClesLocalisation: ['ile de la cite', 'parvis', 'cite', 'quatorzieme arrondissement', '4e'],
+                motsClesZone: ['ile de la cite', 'cite', 'parvis'],
                 anecdote: 'Le roman de Victor Hugo publié en 1831 a largement contribué à sauver l\'édifice de la ruine.',
                 defiPhoto: 'Imiter une gargouille effrayante ou protectrice en faisant une grimace.'
             },
@@ -81,8 +84,9 @@
                 lieuSecret: 'Jardin du Luxembourg',
                 tempsEstimeMinutes: 25,
                 devinette: 'Je suis un vaste espace vert au cœur de la rive gauche, célèbre pour son grand bassin octogonal où les enfants font voguer des voiliers en bois depuis des générations. Qui suis-je ?',
+                questionZone: 'Quel grand boulevard de la rive gauche longe ce jardin historique créé par Marie de Médicis ?',
                 motsCles: ['luxembourg', 'jardin du luxembourg', 'palais du luxembourg'],
-                motsClesLocalisation: ['rive gauche', '6e', 'boulevard saint michel', 'senat'],
+                motsClesZone: ['saint michel', 'boulevard saint michel', 'medicis', 'senat'],
                 anecdote: 'Ce jardin a été créé en 1612 à la demande de Marie de Médicis pour accompagner son palais.',
                 defiPhoto: 'Faire une photo de groupe en mode course de bateaux au bord du bassin.'
             },
@@ -92,8 +96,9 @@
                 lieuSecret: 'Champ de Mars / Tour Eiffel',
                 tempsEstimeMinutes: 30,
                 devinette: 'Érigée pour une exposition universelle internationale, j\'ai longtemps été la structure la plus haute du monde grâce à ma dentelle de fer forgé. Qui suis-je ?',
+                questionZone: 'Sur quel vaste espace vert s\'étend le pied de cette grande dame de fer ?',
                 motsCles: ['tour eiffel', 'eiffel', 'la tour eiffel'],
-                motsClesLocalisation: ['champ de mars', '7e', 'pont d\'iena', 'quai branly'],
+                motsClesZone: ['champ de mars', 'mars', 'pont d iena'],
                 anecdote: 'Gustave Eiffel disposait d\'un petit bureau secret aménagé tout en haut de la structure.',
                 defiPhoto: 'Faire la célèbre illusion d\'optique où l\'on tient le sommet de la tour entre ses doigts.'
             },
@@ -103,8 +108,9 @@
                 lieuSecret: 'Place du Trocadéro',
                 tempsEstimeMinutes: 15,
                 devinette: 'Située sur une colline face à la Seine, je offre l\'une des perspectives panoramiques les plus spectaculaires et photographiées de la capitale. Qui suis-je ?',
+                questionZone: 'Quel célèbre palais abritant des musées se dresse sur cette esplanade panoramique ?',
                 motsCles: ['trocadero', 'trocadéro', 'palais de chaillot'],
-                motsClesLocalisation: ['colline de chaillot', '16e', 'palais de chaillot', 'place'],
+                motsClesZone: ['chaillot', 'palais de chaillot', 'esplanade'],
                 anecdote: 'C\'est l\'endroit idéal pour admirer les illuminations de la Dame de Fer à la tombée de la nuit.',
                 defiPhoto: 'Sauter en l\'air ensemble en criant victoire avec la Tour Eiffel en arrière-plan.'
             }
@@ -171,20 +177,21 @@
             const app = document.getElementById('app');
             if (!app) return;
 
+            // Écran de connexion / code d'équipe pour synchroniser le groupe
             if (!teamCode) {
                 app.className = "flex flex-col min-h-screen p-6 justify-center items-center max-w-md mx-auto";
                 app.innerHTML = `
                     <div class="text-center mb-8">
                         <span class="text-6xl">✨</span>
                         <h1 class="text-3xl font-black mt-3 text-amber-400 tracking-tight">PARIS EXPLORATEUR</h1>
-                        <p class="text-amber-200/80 text-xs mt-1 font-bold tracking-widest uppercase">Synchronisation d'équipe</p>
+                        <p class="text-amber-200/80 text-xs mt-1 font-bold tracking-widest uppercase">Synchronisation d'équipe par code</p>
                     </div>
 
                     <div class="w-full bg-slate-800 p-6 rounded-3xl border border-slate-700 shadow-2xl space-y-6">
                         <div>
-                            <h2 class="text-xs font-black uppercase tracking-wider text-slate-400 mb-3">Option A : Créer l'équipe</h2>
-                            <button onclick="createTeam()" class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-2xl text-sm transition-all shadow-lg">
-                                + CRÉER MON ÉQUIPE
+                            <h2 class="text-xs font-black uppercase tracking-wider text-slate-400 mb-3">1. Créer une nouvelle équipe</h2>
+                            <button onclick="createTeam()" class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-2xl text-sm transition-all shadow-lg uppercase">
+                                + Générer un code d'équipe
                             </button>
                         </div>
 
@@ -195,10 +202,10 @@
                         </div>
 
                         <div class="space-y-3">
-                            <h2 class="text-xs font-black uppercase tracking-wider text-slate-400">Option B : Rejoindre avec le code</h2>
-                            <input id="inputCode" type="text" placeholder="Code (ex: TEAM-123)" class="w-full py-3 px-4 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-amber-400 text-center font-mono font-bold tracking-widest uppercase" />
-                            <button onclick="joinTeam()" class="w-full py-3.5 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl text-sm transition-all">
-                                REJOINDRE L'ÉQUIPE
+                            <h2 class="text-xs font-black uppercase tracking-wider text-slate-400">2. Rejoindre une équipe existante</h2>
+                            <input id="inputCode" type="text" placeholder="Entrer le code (ex: TEAM-4821)" class="w-full py-3 px-4 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-amber-400 text-center font-mono font-bold tracking-widest uppercase" />
+                            <button onclick="joinTeam()" class="w-full py-3.5 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl text-sm transition-all uppercase">
+                                Rejoindre l'équipe
                             </button>
                         </div>
                     </div>
@@ -212,7 +219,7 @@
                 <header class="bg-slate-800 pt-8 pb-6 px-6 rounded-b-[2.5rem] border-b border-slate-700/80 shadow-xl relative text-center">
                     <div class="flex justify-between items-center mb-3">
                         <span class="bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[10px] font-black tracking-widest px-3 py-1 rounded-full uppercase">
-                            🛡️ Équipe : ${teamCode}
+                            🛡️ Code Équipe : ${teamCode}
                         </span>
                         <button onclick="leaveTeam()" class="text-slate-400 hover:text-white text-xs font-bold underline">
                             Changer
@@ -222,7 +229,7 @@
                     <h1 class="text-4xl font-black text-amber-400 my-1">
                         🏆 ${getTotalScore()} <span class="text-lg font-bold text-white">PTS</span>
                     </h1>
-                    <p class="text-slate-400 text-xs font-medium">Progression synchronisée</p>
+                    <p class="text-slate-400 text-xs font-medium">Synchronisation globale active</p>
                 </header>
 
                 <main class="flex-1 px-4 py-6 space-y-6">
@@ -233,7 +240,7 @@
                     <div class="bg-slate-800/90 border border-amber-500 p-6 rounded-3xl text-center space-y-4 shadow-2xl">
                         <span class="text-5xl">🎉</span>
                         <h2 class="text-2xl font-black text-amber-400">Quête Terminée !</h2>
-                        <p class="text-xs text-slate-300 leading-relaxed">Félicitations à votre équipe ! Vous avez résolu toutes les énigmes et exploré Paris avec brio.</p>
+                        <p class="text-xs text-slate-300 leading-relaxed">Félicitations à votre équipe synchronisée ! Vous avez résolu toutes les énigmes de Paris.</p>
                         <div class="text-xl font-bold text-white">Score final : ${getTotalScore()} points</div>
                     </div>
                 `;
@@ -253,20 +260,21 @@
                             <span class="bg-slate-900 border border-slate-700 text-amber-300 font-black text-xs px-2.5 py-1 rounded-xl">${p.points || 0} pts</span>
                         </div>
 
+                        <!-- Gestion de la fenêtre de trajet (+ 5 min après arrivée) -->
                         <div class="flex items-center justify-between bg-slate-900/60 px-3 py-2 rounded-xl border border-slate-700/50 text-[11px]">
                             <span class="text-slate-400">⏳ Fenêtre de trajet :</span>
-                            <span class="font-bold text-amber-300">${timeLeftMin > 0 ? timeLeftMin + ' min restantes' : 'Temps réglementaire dépassé'}</span>
+                            <span class="font-bold text-amber-300">${timeLeftMin > 0 ? timeLeftMin + ' min restantes' : 'Temps réglementaire dépassé (étape accessible)'}</span>
                         </div>
 
-                        <!-- Énigme principale sur le monument -->
+                        <!-- Questions distinctes : Objet/Monument et Zone cible -->
                         <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-700/50 space-y-3">
                             <div>
                                 <div class="text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-1">1. Devinette de l'objet ou monument</div>
                                 <p class="text-slate-200 text-xs leading-relaxed italic">« ${item.devinette} »</p>
                             </div>
-                            <div>
-                                <div class="text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-1">2. Question de localisation de la zone</div>
-                                <p class="text-slate-300 text-xs leading-relaxed">« ${item.questionLocalisation} »</p>
+                            <div class="pt-2 border-t border-slate-800">
+                                <div class="text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-1">2. Question pour localiser la zone cible</div>
+                                <p class="text-slate-300 text-xs leading-relaxed">« ${item.questionZone} »</p>
                             </div>
                         </div>
                 `;
@@ -275,20 +283,20 @@
                     html += `
                         <div class="space-y-3">
                             <div>
-                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Votre réponse (Monument / Objet)</label>
-                                <input id="input_monument_${item.id}" type="text" placeholder="Ex: Tour Eiffel..." value="${p.saisieMonument || ''}" class="w-full text-xs p-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-400" />
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Réponse (Objet / Monument)</label>
+                                <input id="input_objet_${item.id}" type="text" placeholder="Ex: Tour Eiffel..." value="${p.saisieObjet || ''}" class="w-full text-xs p-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-400" />
                             </div>
                             <div>
-                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Votre réponse (Localisation / Zone)</label>
-                                <input id="input_localisation_${item.id}" type="text" placeholder="Ex: Champ de mars..." value="${p.saisieLocalisation || ''}" class="w-full text-xs p-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-400" />
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Réponse (Zone / Localisation)</label>
+                                <input id="input_zone_${item.id}" type="text" placeholder="Ex: Champ de Mars..." value="${p.saisieZone || ''}" class="w-full text-xs p-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-400" />
                             </div>
 
                             <div class="flex gap-2 pt-1">
                                 <button onclick="validerReponse('${item.id}')" class="flex-1 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider shadow-md">
-                                    ✓ Soumettre et Valider
+                                    ✓ Soumettre la réponse
                                 </button>
-                                <button onclick="utiliserJoker('${item.id}')" class="px-3.5 py-3 bg-slate-700 hover:bg-slate-600 text-amber-300 font-bold rounded-xl text-xs uppercase tracking-wider" title="Joker Photo (Points partiels)">
-                                    📸 Joker Photo
+                                <button onclick="utiliserJoker('${item.id}')" class="px-3.5 py-3 bg-slate-700 hover:bg-slate-600 text-amber-300 font-bold rounded-xl text-xs uppercase tracking-wider" title="Joker Photo">
+                                    📸 Joker
                                 </button>
                             </div>
                         </div>
@@ -297,25 +305,26 @@
                     if (p.reponseCorrecte) {
                         html += `
                             <div class="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs">
-                                <span class="font-bold text-emerald-400">Bonne réponse ! Zone débloquée : <span class="text-white">${item.lieuSecret}</span> (+6 pts)</span>
+                                <span class="font-bold text-emerald-400">Succès ! Zone exacte débloquée : <span class="text-white">${item.lieuSecret}</span> (+6 pts)</span>
                             </div>
                         `;
                     } else if (p.jokerUtilise) {
                         html += `
                             <div class="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs space-y-1">
                                 <span class="font-bold text-amber-400">Joker Photo activé (+2 pts)</span>
-                                <div class="text-slate-300">Zone cible débloquée : <span class="text-white font-bold">${item.lieuSecret}</span></div>
+                                <div class="text-slate-300">Zone exacte débloquée : <span class="text-white font-bold">${item.lieuSecret}</span></div>
                             </div>
                         `;
                     } else {
                         html += `
                             <div class="p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-xs space-y-1">
-                                <span class="font-bold text-rose-400 block">Réponses incorrectes (0 pt pour cette étape)</span>
-                                <span class="text-slate-400 text-[10px]">Mais vous pouvez continuer le jeu et valider le défi photo !</span>
+                                <span class="font-bold text-rose-400 block">Réponses non validées (0 pt)</span>
+                                <span class="text-slate-400 text-[10px]">Vous pouvez tout de même valider le défi photo pour continuer.</span>
                             </div>
                         `;
                     }
 
+                    // Section Histoire & Défi Photo + Bouton de finalisation pour passer à l'étape suivante
                     html += `
                         <div class="space-y-4 pt-2 border-t border-slate-700/60">
                             <div class="bg-slate-900/50 p-3.5 rounded-2xl border border-slate-700/50 space-y-2">
@@ -328,13 +337,18 @@
 
                             <div class="bg-slate-900/50 p-3.5 rounded-2xl border border-slate-700/50 space-y-3">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-[11px] font-bold text-amber-300 uppercase">📸 Défi Photo (Finalisation)</span>
+                                    <span class="text-[11px] font-bold text-amber-300 uppercase">📸 Défi Photo requis</span>
                                     ${p.photoPrise ? `<span class="text-[10px] text-emerald-400 font-bold">Validé ✓ (+2 pts)</span>` : ''}
                                 </div>
                                 <p class="text-xs text-slate-300 font-medium italic">${item.defiPhoto}</p>
                                 <input type="file" accept="image/*" capture="environment" onchange="gererPhoto(event, '${item.id}')" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-slate-800 file:text-amber-400 hover:file:bg-slate-700 cursor-pointer" />
                                 ${p.photoData ? `<div class="rounded-xl overflow-hidden max-h-48 border border-slate-700 mt-2"><img src="${p.photoData}" class="w-full h-full object-cover" /></div>` : ''}
                             </div>
+
+                            <!-- BOUTON DE VALIDATION ET PASSAGE DIRECT À L'ÉTAPE SUIVANTE -->
+                            <button onclick="finaliserEtPasserEtape('${item.id}')" class="w-full py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider shadow-lg transition-all">
+                                🚀 Valider l'étape et passer à la suivante
+                            </button>
                         </div>
                     `;
                 }
@@ -363,7 +377,7 @@
         }
 
         function leaveTeam() {
-            if (confirm("Changer ou quitter cette équipe ?")) {
+            if (confirm("Quitter ou changer d'équipe ?")) {
                 storage.removeItem('pe_team_code');
                 teamCode = '';
                 progress = {};
@@ -373,24 +387,22 @@
         }
 
         function validerReponse(id) {
-            const inputMon = document.getElementById(`input_monument_${id}`);
-            const inputLoc = document.getElementById(`input_localisation_${id}`);
-            if (!inputMon || !inputLoc) return;
+            const inputObj = document.getElementById(`input_objet_${id}`);
+            const inputZon = document.getElementById(`input_zone_${id}`);
+            if (!inputObj || !inputZon) return;
 
-            const textMon = inputMon.value.trim().toLowerCase();
-            const textLoc = inputLoc.value.trim().toLowerCase();
-            if (!textMon && !textLoc) return;
+            const textObj = inputObj.value.trim().toLowerCase();
+            const textZon = inputZon.value.trim().toLowerCase();
+            if (!textObj && !textZon) return;
 
             const item = ENIGMES.find(e => e.id === id);
-            const isMonCorrect = item.motsCles.some(mot => textMon.includes(mot));
-            const isLocCorrect = item.motsClesLocalisation.some(mot => textLoc.includes(mot));
-            
-            // Les deux doivent être justes pour avoir les points complets de la réponse
-            const isCorrect = isMonCorrect && isLocCorrect;
+            const isObjCorrect = item.motsCles.some(mot => textObj.includes(mot));
+            const isZonCorrect = item.motsClesZone.some(mot => textZon.includes(mot));
+            const isCorrect = isObjCorrect && isZonCorrect;
 
             if (!progress[id]) progress[id] = { points: 0 };
-            progress[id].saisieMonument = inputMon.value;
-            progress[id].saisieLocalisation = inputLoc.value;
+            progress[id].saisieObjet = inputObj.value;
+            progress[id].saisieZone = inputZon.value;
             progress[id].reponseSoumise = true;
             progress[id].reponseCorrecte = isCorrect;
             progress[id].jokerUtilise = false;
@@ -408,9 +420,9 @@
             progress[id].reponseSoumise = true;
             progress[id].reponseCorrecte = false;
             progress[id].jokerUtilise = true;
-            progress[id].saisieMonument = "Joker Photo activé";
-            progress[id].saisieLocalisation = "Joker Photo activé";
-            progress[id].points = (progress[id].points || 0) + 2; // Points partiels du joker
+            progress[id].saisieObjet = "Joker Photo activé";
+            progress[id].saisieZone = "Joker Photo activé";
+            progress[id].points = (progress[id].points || 0) + 2;
 
             saveState();
             render();
@@ -438,15 +450,18 @@
                     progress[id].points = (progress[id].points || 0) + 2;
                 }
 
-                // Déverrouillage de l'étape suivante après soumission de la réponse (ou joker) ET sauvegarde de la photo
-                if (progress[id].reponseSoumise && progress[id].photoPrise) {
-                    progress[id].etapeCompletee = true;
-                }
-
                 saveState();
                 render();
             };
             reader.readAsDataURL(file);
+        }
+
+        // Action explicite pour valider l'étape et passer immédiatement à la suivante
+        function finaliserEtPasserEtape(id) {
+            if (!progress[id]) progress[id] = {};
+            progress[id].etapeCompletee = true;
+            saveState();
+            render();
         }
 
         window.addEventListener('DOMContentLoaded', () => {
