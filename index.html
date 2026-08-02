@@ -32,7 +32,8 @@
             {
                 id: '1',
                 titre: 'Étape 1 : Le Quartier Moderne',
-                lieu: 'Centre Pompidou / Quartier de l\'Horloge',
+                lieuSecret: 'Centre Pompidou / Quartier de l\'Horloge',
+                tempsEstimeMinutes: 15, // Temps de trajet estimé pour cette étape
                 devinette: 'Je suis célèbre pour mes tuyaux colorés et ma structure inversée où l\'acier et les gaines techniques habillent ma façade. À côté de moi, un automate musical s\'anime régulièrement. Qui suis-je ?',
                 motsCles: ['pompidou', 'centre pompidou', 'beaubourg', 'centrepompidou'],
                 anecdote: 'Inauguré en 1977, ce centre culturel avant-gardiste a été conçu par Renzo Piano et Richard Rogers.',
@@ -41,7 +42,8 @@
             {
                 id: '2',
                 titre: 'Étape 2 : L\'Ancien Palais des Rois',
-                lieu: 'Musée du Louvre & Pyramide',
+                lieuSecret: 'Musée du Louvre & Pyramide',
+                tempsEstimeMinutes: 20,
                 devinette: 'Je garde le sourire depuis des siècles derrière ma vitre blindée. J\'habite dans un immense palais fortifié qui fut la demeure des rois de France avant de devenir le plus grand musée du monde. Qui suis-je ?',
                 motsCles: ['louvre', 'joconde', 'mona lisa', 'musee du louvre'],
                 anecdote: 'La pyramide de verre du Louvre a été conçue par l\'architecte I. M. Pei et inaugurée en 1989.',
@@ -50,7 +52,8 @@
             {
                 id: '3',
                 titre: 'Étape 3 : Le Pont des Amoureux',
-                lieu: 'Pont des Arts',
+                lieuSecret: 'Pont des Arts',
+                tempsEstimeMinutes: 15,
                 devinette: 'Je suis une passerelle piétonne entièrement réservée aux promeneurs, reliant l\'Institut de France au Musée du Louvre avec une vue imprenable sur la Seine. Qui suis-je ?',
                 motsCles: ['pont des arts', 'passerelle'],
                 anecdote: 'C\'est le tout premier pont métallique parisien, construit au début du XIXe siècle.',
@@ -59,7 +62,8 @@
             {
                 id: '4',
                 titre: 'Étape 4 : Les Gardiens de Pierre',
-                lieu: 'Notre-Dame de Paris (Parvis)',
+                lieuSecret: 'Notre-Dame de Paris (Parvis)',
+                tempsEstimeMinutes: 25,
                 devinette: 'Je domine le cœur historique de la capitale depuis des siècles avec mon architecture gothique, mes rosaces monumentales et mes gargouilles protectrices. Qui suis-je ?',
                 motsCles: ['notre dame', 'notre-dame', 'cathedrale notre dame', 'notredame'],
                 anecdote: 'Le roman de Victor Hugo publié en 1831 a largement contribué à sauver l\'édifice de la ruine.',
@@ -68,7 +72,8 @@
             {
                 id: '5',
                 titre: 'Étape 5 : Le Jardin de la Reine',
-                lieu: 'Jardin du Luxembourg',
+                lieuSecret: 'Jardin du Luxembourg',
+                tempsEstimeMinutes: 25,
                 devinette: 'Je suis un vaste espace vert au cœur de la rive gauche, célèbre pour son grand bassin octogonal où les enfants font voguer des voiliers en bois depuis des générations. Qui suis-je ?',
                 motsCles: ['luxembourg', 'jardin du luxembourg', 'palais du luxembourg'],
                 anecdote: 'Ce jardin a été créé en 1612 à la demande de Marie de Médicis pour accompagner son palais.',
@@ -77,7 +82,8 @@
             {
                 id: '6',
                 titre: 'Étape 6 : Le Géant de Fer',
-                lieu: 'Champ de Mars / Tour Eiffel',
+                lieuSecret: 'Champ de Mars / Tour Eiffel',
+                tempsEstimeMinutes: 30,
                 devinette: 'Érigée pour une exposition universelle internationale, j\'ai longtemps été la structure la plus haute du monde grâce à ma dentelle de fer forgé. Qui suis-je ?',
                 motsCles: ['tour eiffel', 'eiffel', 'la tour eiffel'],
                 anecdote: 'Gustave Eiffel disposait d\'un petit bureau secret aménagé tout en haut de la structure.',
@@ -86,7 +92,8 @@
             {
                 id: '7',
                 titre: 'Étape 7 : Le Bouquet Final',
-                lieu: 'Place du Trocadéro',
+                lieuSecret: 'Place du Trocadéro',
+                tempsEstimeMinutes: 15,
                 devinette: 'Située sur une colline face à la Seine, je offre l\'une des perspectives panoramiques les plus spectaculaires et photographiées de la capitale. Qui suis-je ?',
                 motsCles: ['trocadero', 'trocadéro', 'palais de chaillot'],
                 anecdote: 'C\'est l\'endroit idéal pour admirer les illuminations de la Dame de Fer à la tombée de la nuit.',
@@ -96,19 +103,29 @@
 
         let teamCode = storage.getItem('pe_team_code') || '';
         let progress = {};
+        let currentStepIndex = 0;
+        let stepTimers = {}; // Pour gérer les temps de trajet par étape
 
-        try {
-            if (teamCode) {
-                progress = JSON.parse(storage.getItem(`pe_quest_progress_${teamCode}`) || '{}');
+        function loadTeamState() {
+            try {
+                if (teamCode) {
+                    const rawProgress = storage.getItem(`pe_quest_progress_${teamCode}`);
+                    progress = rawProgress ? JSON.parse(rawProgress) : {};
+                    
+                    const rawTimers = storage.getItem(`pe_quest_timers_${teamCode}`);
+                    stepTimers = rawTimers ? JSON.parse(rawTimers) : {};
+                }
+            } catch(e) {
+                progress = {};
+                stepTimers = {};
             }
-        } catch(e) {
-            progress = {};
         }
 
         function saveState() {
             if (teamCode) {
                 storage.setItem('pe_team_code', teamCode);
                 storage.setItem(`pe_quest_progress_${teamCode}`, JSON.stringify(progress));
+                storage.setItem(`pe_quest_timers_${teamCode}`, JSON.stringify(stepTimers));
             }
         }
 
@@ -116,7 +133,36 @@
             return Object.values(progress).reduce((acc, curr) => acc + (curr.points || 0), 0);
         }
 
+        // Détermine l'étape active actuelle (la première non entièrement validée/complétée)
+        function updateCurrentStepIndex() {
+            for (let i = 0; i < ENIGMES.length; i++) {
+                const p = progress[ENIGMES[i].id] || {};
+                // Une étape est complète si la réponse est traitée ET la photo est prise
+                if (!p.etapeCompletee) {
+                    currentStepIndex = i;
+                    initTimerForStep(ENIGMES[i].id, ENIGMES[i].tempsEstimeMinutes);
+                    return;
+                }
+            }
+            currentStepIndex = ENIGMES.length - 1; // Fin du parcours
+        }
+
+        function initTimerForStep(stepId, durationMinutes) {
+            if (!stepTimers[stepId]) {
+                // Temps de trajet + 5 minutes de battement à l'arrivée
+                const totalMs = (durationMinutes + 5) * 60 * 1000;
+                stepTimers[stepId] = {
+                    deadline: Date.now() + totalMs,
+                    expired: false
+                };
+                saveState();
+            }
+        }
+
         function render() {
+            loadTeamState();
+            updateCurrentStepIndex();
+
             const app = document.getElementById('app');
             if (!app) return;
 
@@ -126,7 +172,7 @@
                     <div class="text-center mb-8">
                         <span class="text-6xl">✨</span>
                         <h1 class="text-3xl font-black mt-3 text-amber-400 tracking-tight">PARIS EXPLORATEUR</h1>
-                        <p class="text-amber-200/80 text-xs mt-1 font-bold tracking-widest uppercase">Spécial Enfants</p>
+                        <p class="text-amber-200/80 text-xs mt-1 font-bold tracking-widest uppercase">Synchronisation d'équipe</p>
                     </div>
 
                     <div class="w-full bg-slate-800 p-6 rounded-3xl border border-slate-700 shadow-2xl space-y-6">
@@ -144,10 +190,10 @@
                         </div>
 
                         <div class="space-y-3">
-                            <h2 class="text-xs font-black uppercase tracking-wider text-slate-400">Option B : Rejoindre une équipe</h2>
+                            <h2 class="text-xs font-black uppercase tracking-wider text-slate-400">Option B : Rejoindre avec le code</h2>
                             <input id="inputCode" type="text" placeholder="Code (ex: TEAM-123)" class="w-full py-3 px-4 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-amber-400 text-center font-mono font-bold tracking-widest uppercase" />
                             <button onclick="joinTeam()" class="w-full py-3.5 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl text-sm transition-all">
-                                REJOINDRE
+                                REJOINDRE L'ÉQUIPE
                             </button>
                         </div>
                     </div>
@@ -156,85 +202,105 @@
             }
 
             app.className = "max-w-md mx-auto min-h-screen relative flex flex-col";
+            
             let html = `
                 <header class="bg-slate-800 pt-8 pb-6 px-6 rounded-b-[2.5rem] border-b border-slate-700/80 shadow-xl relative text-center">
                     <div class="flex justify-between items-center mb-3">
                         <span class="bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[10px] font-black tracking-widest px-3 py-1 rounded-full uppercase">
-                            🛡️ ${teamCode}
+                            🛡️ Équipe : ${teamCode}
                         </span>
                         <button onclick="leaveTeam()" class="text-slate-400 hover:text-white text-xs font-bold underline">
-                            Quitter
+                            Changer
                         </button>
                     </div>
 
                     <h1 class="text-4xl font-black text-amber-400 my-1">
                         🏆 ${getTotalScore()} <span class="text-lg font-bold text-white">PTS</span>
                     </h1>
-                    <p class="text-slate-400 text-xs font-medium">Parcours 7 étapes</p>
+                    <p class="text-slate-400 text-xs font-medium">Progression synchronisée</p>
                 </header>
 
                 <main class="flex-1 px-4 py-6 space-y-6">
             `;
 
-            ENIGMES.forEach(item => {
+            // Si toutes les étapes sont complétées
+            if (currentStepIndex >= ENIGMES.length - 1 && progress[ENIGMES[ENIGMES.length - 1].id]?.etapeCompletee) {
+                html += `
+                    <div class="bg-slate-800/90 border border-amber-500 p-6 rounded-3xl text-center space-y-4 shadow-2xl">
+                        <span class="text-5xl">🎉</span>
+                        <h2 class="text-2xl font-black text-amber-400">Quête Terminée !</h2>
+                        <p class="text-xs text-slate-300 leading-relaxed">Félicitations à votre équipe ! Vous avez résolu toutes les énigmes et exploré Paris avec brio.</p>
+                        <div class="text-xl font-bold text-white">Score final : ${getTotalScore()} points</div>
+                    </div>
+                `;
+            } else {
+                // Affichage unique de l'étape active actuelle
+                const item = ENIGMES[currentStepIndex];
                 const p = progress[item.id] || {};
                 const isAnswered = p.reponseSoumise !== undefined;
+                const timerData = stepTimers[item.id] || { deadline: Date.now() + 100000 };
+                
+                // Calcul du temps restant
+                const timeLeftMs = timerData.deadline - Date.now();
+                const timeLeftMin = Math.max(0, Math.ceil(timeLeftMs / 60000));
 
                 html += `
-                    <article class="p-5 rounded-3xl border transition-all ${isAnswered ? (p.reponseCorrecte ? 'bg-slate-800/90 border-emerald-500/40 shadow-lg' : 'bg-slate-800/90 border-rose-500/40 shadow-lg') : 'bg-slate-800/40 border-slate-700/60'}">
-                        <div class="flex justify-between items-center mb-1">
+                    <article class="p-5 rounded-3xl border bg-slate-800/90 border-amber-500/40 shadow-lg space-y-4">
+                        <div class="flex justify-between items-center">
                             <span class="text-xs font-black text-amber-400 tracking-wider uppercase">${item.titre}</span>
-                            <span class="bg-slate-900 border border-slate-700 text-amber-300 font-black text-xs px-2.5 py-1 rounded-xl">${p.points || 0} / 12 pts</span>
+                            <span class="bg-slate-900 border border-slate-700 text-amber-300 font-black text-xs px-2.5 py-1 rounded-xl">${p.points || 0} pts</span>
                         </div>
-                        <div class="text-[11px] text-slate-400 font-semibold mb-3">📍 Zone cible : ${item.lieu}</div>
 
-                        <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-700/50 mb-4">
-                            <div class="text-[11px] font-bold text-amber-400 uppercase tracking-wider mb-2">🚇 Énigme / Indice</div>
+                        <!-- Gestion du temps de trajet -->
+                        <div class="flex items-center justify-between bg-slate-900/60 px-3 py-2 rounded-xl border border-slate-700/50 text-[11px]">
+                            <span class="text-slate-400">⏳ Fenêtre de validité :</span>
+                            <span class="font-bold text-amber-300">${timeLeftMin > 0 ? timeLeftMin + ' min restantes' : 'Temps réglementaire dépassé (accessible)'}</span>
+                        </div>
+
+                        <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-700/50">
+                            <div class="text-[11px] font-bold text-amber-400 uppercase tracking-wider mb-2">🚇 Énigme / Indice mystère</div>
                             <p class="text-slate-200 text-xs leading-relaxed italic">« ${item.devinette} »</p>
                         </div>
                 `;
 
+                // Phase 1 : Résolution de l'énigme (La zone cible reste secrète)
                 if (!isAnswered) {
                     html += `
-                        <div class="space-y-2 mb-4">
-                            <input id="input_${item.id}" type="text" placeholder="Votre réponse..." value="${p.saisieText || ''}" class="w-full text-xs p-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-400" />
+                        <div class="space-y-2">
+                            <input id="input_${item.id}" type="text" placeholder="Votre réponse (nom du lieu)..." value="${p.saisieText || ''}" class="w-full text-xs p-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-400" />
                             <div class="flex gap-2">
                                 <button onclick="validerReponse('${item.id}')" class="flex-1 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider">
                                     Valider (+5 pts)
                                 </button>
-                                <button onclick="utiliserJoker('${item.id}')" class="px-3 py-2.5 bg-slate-700 hover:bg-slate-600 text-amber-300 font-bold rounded-xl text-xs uppercase tracking-wider" title="Joker Photo (+2 pts)">
+                                <button onclick="utiliserJoker('${item.id}')" class="px-3.5 py-2.5 bg-slate-700 hover:bg-slate-600 text-amber-300 font-bold rounded-xl text-xs uppercase tracking-wider" title="Joker Photo (+2 pts)">
                                     📸 Joker
                                 </button>
                             </div>
                         </div>
                     `;
                 } else {
+                    // Résultat de la réponse
                     if (p.reponseCorrecte) {
                         html += `
-                            <div class="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl mb-4 text-xs">
-                                <span class="font-bold text-emerald-400">Bravo ! Bonne réponse (+5 pts)</span>
-                            </div>
-                        `;
-                    } else if (p.jokerUtilise) {
-                        html += `
-                            <div class="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl mb-4 text-xs">
-                                <span class="font-bold text-amber-400">Joker photo activé (+2 pts)</span>
+                            <div class="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs">
+                                <span class="font-bold text-emerald-400">Lieu trouvé ! Zone : <span class="text-white">${item.lieuSecret}</span> (+5 pts)</span>
                             </div>
                         `;
                     } else {
                         html += `
-                            <div class="p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl mb-4 text-xs space-y-1">
-                                <span class="font-bold text-rose-400 block">Mauvaise réponse (0 pt pour le lieu)</span>
-                                <span class="text-slate-400 text-[11px]">Votre saisie : « ${p.saisieText} »</span>
+                            <div class="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs space-y-1">
+                                <span class="font-bold text-amber-400">Joker Photo activé (+2 pts)</span>
+                                <div class="text-slate-300">Zone cible débloquée : <span class="text-white font-bold">${item.lieuSecret}</span></div>
                             </div>
                         `;
                     }
 
+                    // Phase 2 : Histoire & Défi Photo (requis pour valider l'étape et passer à la suite)
                     html += `
                         <div class="space-y-4 pt-2 border-t border-slate-700/60">
                             <div class="bg-slate-900/50 p-3.5 rounded-2xl border border-slate-700/50 space-y-2">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-[11px] font-bold text-amber-300 uppercase">📜 Histoire</span>
+                                    <span class="text-[11px] font-bold text-amber-300 uppercase">📜 Histoire & Anecdote</span>
                                     ${!p.anecdoteLue ? `<button onclick="validerAnecdote('${item.id}')" class="text-[10px] bg-amber-500 text-slate-950 px-2.5 py-1 rounded-lg font-black uppercase">Lire (+3 pts)</button>` : `<span class="text-[10px] text-emerald-400 font-bold">Lue ✓</span>`}
                                 </div>
                                 <p class="text-xs text-slate-300 leading-relaxed">${item.anecdote}</p>
@@ -242,8 +308,8 @@
 
                             <div class="bg-slate-900/50 p-3.5 rounded-2xl border border-slate-700/50 space-y-3">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-[11px] font-bold text-amber-300 uppercase">📸 Défi Photo</span>
-                                    ${p.photoPrise ? `<span class="text-[10px] text-emerald-400 font-bold">Réussi ✓</span>` : ''}
+                                    <span class="text-[11px] font-bold text-amber-300 uppercase">📸 Défi Photo (Requis)</span>
+                                    ${p.photoPrise ? `<span class="text-[10px] text-emerald-400 font-bold">Validé ✓ (+2 pts)</span>` : ''}
                                 </div>
                                 <p class="text-xs text-slate-300 font-medium italic">${item.defiPhoto}</p>
                                 <input type="file" accept="image/*" capture="environment" onchange="gererPhoto(event, '${item.id}')" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-slate-800 file:text-amber-400 hover:file:bg-slate-700 cursor-pointer" />
@@ -252,16 +318,18 @@
                         </div>
                     `;
                 }
+
                 html += `</article>`;
-            });
+            }
 
             html += `</main>`;
             app.innerHTML = html;
         }
 
         function createTeam() {
-            teamCode = 'TEAM-' + Math.floor(100 + Math.random() * 900);
+            teamCode = 'TEAM-' + Math.floor(1000 + Math.random() * 9000);
             progress = {};
+            stepTimers = {};
             saveState();
             render();
         }
@@ -270,20 +338,16 @@
             const input = document.getElementById('inputCode');
             if (!input || !input.value.trim()) return;
             teamCode = input.value.trim().toUpperCase();
-            try {
-                progress = JSON.parse(storage.getItem(`pe_quest_progress_${teamCode}`) || '{}');
-            } catch(e) {
-                progress = {};
-            }
-            saveState();
+            loadTeamState();
             render();
         }
 
         function leaveTeam() {
-            if (confirm("Quitter l'équipe ?")) {
+            if (confirm("Changer ou quitter cette équipe ?")) {
                 storage.removeItem('pe_team_code');
                 teamCode = '';
                 progress = {};
+                stepTimers = {};
                 render();
             }
         }
@@ -316,8 +380,7 @@
             progress[id].reponseCorrecte = false;
             progress[id].jokerUtilise = true;
             progress[id].saisieText = "Joker Photo activé";
-            // Le joker attribue 2 points au lieu des 5 points de la réponse exacte
-            progress[id].points = (progress[id].points || 0) + 2;
+            progress[id].points = (progress[id].points || 0) + 2; // Attribue les points partiels du joker
 
             saveState();
             render();
@@ -336,12 +399,20 @@
             if (!file) return;
             const reader = new FileReader();
             reader.onloadend = () => {
+                if (!progress[id]) progress[id] = { points: 0 };
                 const isNew = !progress[id].photoPrise;
                 progress[id].photoData = reader.result;
+                
                 if (isNew) {
                     progress[id].photoPrise = true;
                     progress[id].points = (progress[id].points || 0) + 2;
                 }
+
+                // La nouvelle carte s'affiche uniquement après sauvegarde de la photo (si réponse ou joker joués)
+                if (progress[id].reponseSoumise && progress[id].photoPrise) {
+                    progress[id].etapeCompletee = true;
+                }
+
                 saveState();
                 render();
             };
@@ -350,6 +421,7 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             try {
+                loadTeamState();
                 render();
             } catch(err) {
                 document.getElementById('app').innerHTML = `<div class="text-red-400 p-4 text-center text-xs">Erreur de chargement : ${err.message}</div>`;
