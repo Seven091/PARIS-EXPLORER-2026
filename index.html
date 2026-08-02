@@ -16,7 +16,6 @@
     </div>
 
     <script>
-        // Système de stockage local sécurisé pour la synchronisation par code d'équipe
         let storage = {
             getItem(key) {
                 try { return localStorage.getItem(key); } catch(e) { return null; }
@@ -35,10 +34,10 @@
                 titre: 'Étape 1 : Le Quartier Moderne',
                 lieuSecret: 'Centre Pompidou / Quartier de l\'Horloge',
                 tempsEstimeMinutes: 15,
-                devinette: 'Je suis célèbre pour mes tuyaux colorés et ma structure inversée où l\'acier et les gaines techniques habillent ma façade. À côté de moi, un automate musical s\'anime régulièrement. Qui suis-je ?',
-                questionZone: 'Dans quel quartier piétonnier et animé du 4e arrondissement, connu pour son plateau aux couleurs primaires, dois-je me rendre pour le trouver ?',
-                motsCles: ['pompidou', 'centre pompidou', 'beaubourg', 'centrepompidou'],
+                questionZone: 'Dans quel quartier piétonnier et animé du 4e arrondissement, connu pour son plateau aux couleurs primaires, dois-je me rendre ?',
+                devinette: 'Je suis célèbre pour mes tuyaux colorés et ma structure inversée où l\'acier et les gaines techniques habillent ma façade. Qui suis-je ?',
                 motsClesZone: ['beaubourg', 'horloge', '4e', 'quatrieme', 'plateau'],
+                motsClesObjet: ['pompidou', 'centre pompidou', 'centrepompidou'],
                 anecdote: 'Inauguré en 1977, ce centre culturel avant-gardiste a été conçu par Renzo Piano et Richard Rogers.',
                 defiPhoto: 'Prendre une photo de groupe en imitant la structure métallique ou les couleurs vives du bâtiment.'
             },
@@ -47,10 +46,10 @@
                 titre: 'Étape 2 : L\'Ancien Palais des Rois',
                 lieuSecret: 'Musée du Louvre & Pyramide',
                 tempsEstimeMinutes: 20,
-                devinette: 'Je garde le sourire depuis des siècles derrière ma vitre blindée. J\'habite dans un immense palais fortifié qui fut la demeure des rois de France avant de devenir le plus grand musée du monde. Qui suis-je ?',
                 questionZone: 'Quel célèbre monument de verre moderne marque l\'entrée principale de ce palais royal situé au bord de la Seine ?',
-                motsCles: ['louvre', 'joconde', 'mona lisa', 'musee du louvre'],
+                devinette: 'Je garde le sourire depuis des siècles derrière ma vitre blindée. J\'habite dans un immense palais fortifié qui fut la demeure des rois de France. Qui suis-je ?',
                 motsClesZone: ['pyramide', 'cour napoleon', 'rivoli'],
+                motsClesObjet: ['louvre', 'joconde', 'mona lisa', 'musee du louvre'],
                 anecdote: 'La pyramide de verre du Louvre a été conçue par l\'architecte I. M. Pei et inaugurée en 1989.',
                 defiPhoto: 'Prendre un selfie avec la pose ou le sourire le plus mystérieux possible.'
             },
@@ -59,10 +58,10 @@
                 titre: 'Étape 3 : Le Pont des Amoureux',
                 lieuSecret: 'Pont des Arts',
                 tempsEstimeMinutes: 15,
-                devinette: 'Je suis une passerelle piétonne entièrement réservée aux promeneurs, reliant l\'Institut de France au Musée du Louvre avec une vue imprenable sur la Seine. Qui suis-je ?',
                 questionZone: 'Quel quai de la rive gauche permet d\'accéder directement à cette passerelle piétonne ?',
-                motsCles: ['pont des arts', 'passerelle'],
-                motsClesZone: ['quai de conti', 'institut de france', 'conti'],
+                devinette: 'Je suis une passerelle piétonne entièrement réservée aux promeneurs, reliant l\'Institut de France au Musée du Louvre. Qui suis-je ?',
+                motsClesZone: ['quai de conti', 'conti', 'institut de france'],
+                motsClesObjet: ['pont des arts', 'passerelle'],
                 anecdote: 'C\'est le tout premier pont métallique parisien, construit au début du XIXe siècle.',
                 defiPhoto: 'Faire semblant de porter tout le pont sur vos épaules ou de marcher sur un fil invisible.'
             },
@@ -71,10 +70,10 @@
                 titre: 'Étape 4 : Les Gardiens de Pierre',
                 lieuSecret: 'Notre-Dame de Paris (Parvis)',
                 tempsEstimeMinutes: 25,
-                devinette: 'Je domine le cœur historique de la capitale depuis des siècles avec mon architecture gothique, mes rosaces monumentales et mes gargouilles protectrices. Qui suis-je ?',
                 questionZone: 'Sur quelle île naturelle de la Seine, berceau historique de Paris, dois-je poser mes pas ?',
-                motsCles: ['notre dame', 'notre-dame', 'cathedrale notre dame', 'notredame'],
+                devinette: 'Je domine le cœur historique de la capitale depuis des siècles avec mon architecture gothique et mes gargouilles. Qui suis-je ?',
                 motsClesZone: ['ile de la cite', 'cite', 'parvis'],
+                motsClesObjet: ['notre dame', 'notre-dame', 'cathedrale', 'notredame'],
                 anecdote: 'Le roman de Victor Hugo publié en 1831 a largement contribué à sauver l\'édifice de la ruine.',
                 defiPhoto: 'Imiter une gargouille effrayante ou protectrice en faisant une grimace.'
             },
@@ -83,10 +82,10 @@
                 titre: 'Étape 5 : Le Jardin de la Reine',
                 lieuSecret: 'Jardin du Luxembourg',
                 tempsEstimeMinutes: 25,
-                devinette: 'Je suis un vaste espace vert au cœur de la rive gauche, célèbre pour son grand bassin octogonal où les enfants font voguer des voiliers en bois depuis des générations. Qui suis-je ?',
                 questionZone: 'Quel grand boulevard de la rive gauche longe ce jardin historique créé par Marie de Médicis ?',
-                motsCles: ['luxembourg', 'jardin du luxembourg', 'palais du luxembourg'],
+                devinette: 'Je suis un vaste espace vert célèbre pour son grand bassin octogonal où les enfants font voguer des voiliers. Qui suis-je ?',
                 motsClesZone: ['saint michel', 'boulevard saint michel', 'medicis', 'senat'],
+                motsClesObjet: ['luxembourg', 'jardin du luxembourg', 'palais du luxembourg'],
                 anecdote: 'Ce jardin a été créé en 1612 à la demande de Marie de Médicis pour accompagner son palais.',
                 defiPhoto: 'Faire une photo de groupe en mode course de bateaux au bord du bassin.'
             },
@@ -95,10 +94,10 @@
                 titre: 'Étape 6 : Le Géant de Fer',
                 lieuSecret: 'Champ de Mars / Tour Eiffel',
                 tempsEstimeMinutes: 30,
-                devinette: 'Érigée pour une exposition universelle internationale, j\'ai longtemps été la structure la plus haute du monde grâce à ma dentelle de fer forgé. Qui suis-je ?',
                 questionZone: 'Sur quel vaste espace vert s\'étend le pied de cette grande dame de fer ?',
-                motsCles: ['tour eiffel', 'eiffel', 'la tour eiffel'],
+                devinette: 'Érigée pour une exposition universelle internationale, j\'ai longtemps été la structure la plus haute du monde. Qui suis-je ?',
                 motsClesZone: ['champ de mars', 'mars', 'pont d iena'],
+                motsClesObjet: ['tour eiffel', 'eiffel', 'tour'],
                 anecdote: 'Gustave Eiffel disposait d\'un petit bureau secret aménagé tout en haut de la structure.',
                 defiPhoto: 'Faire la célèbre illusion d\'optique où l\'on tient le sommet de la tour entre ses doigts.'
             },
@@ -107,10 +106,10 @@
                 titre: 'Étape 7 : Le Bouquet Final',
                 lieuSecret: 'Place du Trocadéro',
                 tempsEstimeMinutes: 15,
-                devinette: 'Située sur une colline face à la Seine, je offre l\'une des perspectives panoramiques les plus spectaculaires et photographiées de la capitale. Qui suis-je ?',
                 questionZone: 'Quel célèbre palais abritant des musées se dresse sur cette esplanade panoramique ?',
-                motsCles: ['trocadero', 'trocadéro', 'palais de chaillot'],
+                devinette: 'Située sur une colline face à la Seine, je offre l\'une des perspectives panoramiques les plus photographiées. Qui suis-je ?',
                 motsClesZone: ['chaillot', 'palais de chaillot', 'esplanade'],
+                motsClesObjet: ['trocadero', 'trocadéro'],
                 anecdote: 'C\'est l\'endroit idéal pour admirer les illuminations de la Dame de Fer à la tombée de la nuit.',
                 defiPhoto: 'Sauter en l\'air ensemble en criant victoire avec la Tour Eiffel en arrière-plan.'
             }
@@ -170,6 +169,27 @@
             }
         }
 
+        // Fonction utilitaire pour nettoyer et normaliser le texte (suppression des accents, minuscules, espaces superflus)
+        function normaliserTexte(texte) {
+            if (!texte) return '';
+            return texte
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "") // Supprime les accents
+                .replace(/[^a-z0-9\s]/g, " ")     // Remplace la ponctuation par des espaces
+                .replace(/\s+/g, " ")
+                .trim();
+        }
+
+        function verifierMotCle(saisie, motsClesTableau) {
+            const cleanSaisie = normaliserTexte(saisie);
+            if (!cleanSaisie) return false;
+            return motsClesTableau.some(mot => {
+                const cleanMot = normaliserTexte(mot);
+                return cleanSaisie.includes(cleanMot);
+            });
+        }
+
         function render() {
             loadTeamState();
             updateCurrentStepIndex();
@@ -177,7 +197,6 @@
             const app = document.getElementById('app');
             if (!app) return;
 
-            // Écran de connexion / code d'équipe pour synchroniser le groupe
             if (!teamCode) {
                 app.className = "flex flex-col min-h-screen p-6 justify-center items-center max-w-md mx-auto";
                 app.innerHTML = `
@@ -240,14 +259,13 @@
                     <div class="bg-slate-800/90 border border-amber-500 p-6 rounded-3xl text-center space-y-4 shadow-2xl">
                         <span class="text-5xl">🎉</span>
                         <h2 class="text-2xl font-black text-amber-400">Quête Terminée !</h2>
-                        <p class="text-xs text-slate-300 leading-relaxed">Félicitations à votre équipe synchronisée ! Vous avez résolu toutes les énigmes de Paris.</p>
+                        <p class="text-xs text-slate-300 leading-relaxed">Félicitations à votre équipe synchronisée ! Vous avez résolu toutes les étapes.</p>
                         <div class="text-xl font-bold text-white">Score final : ${getTotalScore()} points</div>
                     </div>
                 `;
             } else {
                 const item = ENIGMES[currentStepIndex];
                 const p = progress[item.id] || {};
-                const isAnswered = p.reponseSoumise === true;
                 const timerData = stepTimers[item.id] || { deadline: Date.now() + 100000 };
                 
                 const timeLeftMs = timerData.deadline - Date.now();
@@ -260,77 +278,63 @@
                             <span class="bg-slate-900 border border-slate-700 text-amber-300 font-black text-xs px-2.5 py-1 rounded-xl">${p.points || 0} pts</span>
                         </div>
 
-                        <!-- Gestion de la fenêtre de trajet (+ 5 min après arrivée) -->
                         <div class="flex items-center justify-between bg-slate-900/60 px-3 py-2 rounded-xl border border-slate-700/50 text-[11px]">
                             <span class="text-slate-400">⏳ Fenêtre de trajet :</span>
                             <span class="font-bold text-amber-300">${timeLeftMin > 0 ? timeLeftMin + ' min restantes' : 'Temps réglementaire dépassé (étape accessible)'}</span>
                         </div>
 
-                        <!-- Questions distinctes : Objet/Monument et Zone cible -->
-                        <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-700/50 space-y-3">
-                            <div>
-                                <div class="text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-1">1. Devinette de l'objet ou monument</div>
-                                <p class="text-slate-200 text-xs leading-relaxed italic">« ${item.devinette} »</p>
-                            </div>
-                            <div class="pt-2 border-t border-slate-800">
-                                <div class="text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-1">2. Question pour localiser la zone cible</div>
-                                <p class="text-slate-300 text-xs leading-relaxed">« ${item.questionZone} »</p>
-                            </div>
+                        <!-- 1. QUESTION DE LOCALISATION (Affichée EN PREMIER) -->
+                        <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-700/50 space-y-2">
+                            <div class="text-[10px] font-bold text-amber-400 uppercase tracking-wider">📍 1. Question de Localisation Géographique</div>
+                            <p class="text-slate-200 text-xs leading-relaxed">« ${item.questionZone} »</p>
+                            
+                            ${p.zoneValidee ? `
+                                <div class="p-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-[11px] text-emerald-400 font-bold">
+                                    Zone validée ✓ (+3 pts)
+                                </div>
+                            ` : `
+                                <div class="space-y-2 pt-1">
+                                    <input id="input_zone_${item.id}" type="text" placeholder="Votre réponse géographique..." value="${p.saisieZone || ''}" class="w-full text-xs p-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-amber-400" />
+                                    <button onclick="validerZone('${item.id}')" class="w-full py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider">
+                                        Valider la Zone (+3 pts)
+                                    </button>
+                                </div>
+                            `}
+                        </div>
+
+                        <!-- 2. DEVINETTE DE L'OBJET / MONUMENT -->
+                        <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-700/50 space-y-2">
+                            <div class="text-[10px] font-bold text-amber-400 uppercase tracking-wider">🗿 2. Devinette de l'Objet / Monument</div>
+                            <p class="text-slate-200 text-xs leading-relaxed italic">« ${item.devinette} »</p>
+
+                            ${p.objetValide ? `
+                                <div class="p-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-[11px] text-emerald-400 font-bold">
+                                    Monument validé ✓ : ${item.lieuSecret} (+3 pts)
+                                </div>
+                            ` : `
+                                <div class="space-y-2 pt-1">
+                                    <input id="input_objet_${item.id}" type="text" placeholder="Nom du monument ou objet..." value="${p.saisieObjet || ''}" class="w-full text-xs p-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-amber-400" />
+                                    <div class="flex gap-2">
+                                        <button onclick="validerObjet('${item.id}')" class="flex-1 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider">
+                                            Valider l'Objet (+3 pts)
+                                        </button>
+                                        <button onclick="utiliserJoker('${item.id}')" class="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-amber-300 font-bold rounded-xl text-xs uppercase tracking-wider" title="Joker Photo">
+                                            📸 Joker
+                                        </button>
+                                    </div>
+                                </div>
+                            `}
                         </div>
                 `;
 
-                if (!isAnswered) {
-                    html += `
-                        <div class="space-y-3">
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Réponse (Objet / Monument)</label>
-                                <input id="input_objet_${item.id}" type="text" placeholder="Ex: Tour Eiffel..." value="${p.saisieObjet || ''}" class="w-full text-xs p-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-400" />
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Réponse (Zone / Localisation)</label>
-                                <input id="input_zone_${item.id}" type="text" placeholder="Ex: Champ de Mars..." value="${p.saisieZone || ''}" class="w-full text-xs p-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-400" />
-                            </div>
-
-                            <div class="flex gap-2 pt-1">
-                                <button onclick="validerReponse('${item.id}')" class="flex-1 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider shadow-md">
-                                    ✓ Soumettre la réponse
-                                </button>
-                                <button onclick="utiliserJoker('${item.id}')" class="px-3.5 py-3 bg-slate-700 hover:bg-slate-600 text-amber-300 font-bold rounded-xl text-xs uppercase tracking-wider" title="Joker Photo">
-                                    📸 Joker
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    if (p.reponseCorrecte) {
-                        html += `
-                            <div class="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs">
-                                <span class="font-bold text-emerald-400">Succès ! Zone exacte débloquée : <span class="text-white">${item.lieuSecret}</span> (+6 pts)</span>
-                            </div>
-                        `;
-                    } else if (p.jokerUtilise) {
-                        html += `
-                            <div class="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs space-y-1">
-                                <span class="font-bold text-amber-400">Joker Photo activé (+2 pts)</span>
-                                <div class="text-slate-300">Zone exacte débloquée : <span class="text-white font-bold">${item.lieuSecret}</span></div>
-                            </div>
-                        `;
-                    } else {
-                        html += `
-                            <div class="p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-xs space-y-1">
-                                <span class="font-bold text-rose-400 block">Réponses non validées (0 pt)</span>
-                                <span class="text-slate-400 text-[10px]">Vous pouvez tout de même valider le défi photo pour continuer.</span>
-                            </div>
-                        `;
-                    }
-
-                    // Section Histoire & Défi Photo + Bouton de finalisation pour passer à l'étape suivante
+                // Si les réponses sont tentées ou traitées, afficher l'histoire et le défi photo
+                if (p.zoneValidee || p.objetValide || p.jokerUtilise) {
                     html += `
                         <div class="space-y-4 pt-2 border-t border-slate-700/60">
                             <div class="bg-slate-900/50 p-3.5 rounded-2xl border border-slate-700/50 space-y-2">
                                 <div class="flex justify-between items-center">
                                     <span class="text-[11px] font-bold text-amber-300 uppercase">📜 Histoire & Anecdote</span>
-                                    ${!p.anecdoteLue ? `<button onclick="validerAnecdote('${item.id}')" class="text-[10px] bg-amber-500 text-slate-950 px-2.5 py-1 rounded-lg font-black uppercase">Lire (+3 pts)</button>` : `<span class="text-[10px] text-emerald-400 font-bold">Lue ✓</span>`}
+                                    ${!p.anecdoteLue ? `<button onclick="validerAnecdote('${item.id}')" class="text-[10px] bg-amber-500 text-slate-950 px-2.5 py-1 rounded-lg font-black uppercase">Lire (+2 pts)</button>` : `<span class="text-[10px] text-emerald-400 font-bold">Lue ✓</span>`}
                                 </div>
                                 <p class="text-xs text-slate-300 leading-relaxed">${item.anecdote}</p>
                             </div>
@@ -345,7 +349,6 @@
                                 ${p.photoData ? `<div class="rounded-xl overflow-hidden max-h-48 border border-slate-700 mt-2"><img src="${p.photoData}" class="w-full h-full object-cover" /></div>` : ''}
                             </div>
 
-                            <!-- BOUTON DE VALIDATION ET PASSAGE DIRECT À L'ÉTAPE SUIVANTE -->
                             <button onclick="finaliserEtPasserEtape('${item.id}')" class="w-full py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider shadow-lg transition-all">
                                 🚀 Valider l'étape et passer à la suivante
                             </button>
@@ -386,40 +389,55 @@
             }
         }
 
-        function validerReponse(id) {
-            const inputObj = document.getElementById(`input_objet_${id}`);
-            const inputZon = document.getElementById(`input_zone_${id}`);
-            if (!inputObj || !inputZon) return;
-
-            const textObj = inputObj.value.trim().toLowerCase();
-            const textZon = inputZon.value.trim().toLowerCase();
-            if (!textObj && !textZon) return;
-
+        // Validation séparée de la zone géographique
+        function validerZone(id) {
+            const input = document.getElementById(`input_zone_${id}`);
+            if (!input) return;
+            const texte = input.value;
             const item = ENIGMES.find(e => e.id === id);
-            const isObjCorrect = item.motsCles.some(mot => textObj.includes(mot));
-            const isZonCorrect = item.motsClesZone.some(mot => textZon.includes(mot));
-            const isCorrect = isObjCorrect && isZonCorrect;
 
             if (!progress[id]) progress[id] = { points: 0 };
-            progress[id].saisieObjet = inputObj.value;
-            progress[id].saisieZone = inputZon.value;
-            progress[id].reponseSoumise = true;
-            progress[id].reponseCorrecte = isCorrect;
-            progress[id].jokerUtilise = false;
+            progress[id].saisieZone = texte;
 
-            if (isCorrect) {
-                progress[id].points = (progress[id].points || 0) + 6;
+            if (verifierMotCle(texte, item.motsClesZone)) {
+                if (!progress[id].zoneValidee) {
+                    progress[id].zoneValidee = true;
+                    progress[id].points = (progress[id].points || 0) + 3;
+                }
+            } else {
+                alert("Réponse géographique incorrecte. Réessayez !");
             }
+            saveState();
+            render();
+        }
 
+        // Validation séparée de l'objet/monument
+        function validerObjet(id) {
+            const input = document.getElementById(`input_objet_${id}`);
+            if (!input) return;
+            const texte = input.value;
+            const item = ENIGMES.find(e => e.id === id);
+
+            if (!progress[id]) progress[id] = { points: 0 };
+            progress[id].saisieObjet = texte;
+
+            if (verifierMotCle(texte, item.motsClesObjet)) {
+                if (!progress[id].objetValide) {
+                    progress[id].objetValide = true;
+                    progress[id].points = (progress[id].points || 0) + 3;
+                }
+            } else {
+                alert("Nom du monument incorrect. Réessayez !");
+            }
             saveState();
             render();
         }
 
         function utiliserJoker(id) {
             if (!progress[id]) progress[id] = { points: 0 };
-            progress[id].reponseSoumise = true;
-            progress[id].reponseCorrecte = false;
             progress[id].jokerUtilise = true;
+            progress[id].objetValide = true;
+            progress[id].zoneValidee = true;
             progress[id].saisieObjet = "Joker Photo activé";
             progress[id].saisieZone = "Joker Photo activé";
             progress[id].points = (progress[id].points || 0) + 2;
@@ -431,7 +449,7 @@
         function validerAnecdote(id) {
             if (progress[id].anecdoteLue) return;
             progress[id].anecdoteLue = true;
-            progress[id].points = (progress[id].points || 0) + 3;
+            progress[id].points = (progress[id].points || 0) + 2;
             saveState();
             render();
         }
@@ -456,7 +474,6 @@
             reader.readAsDataURL(file);
         }
 
-        // Action explicite pour valider l'étape et passer immédiatement à la suivante
         function finaliserEtPasserEtape(id) {
             if (!progress[id]) progress[id] = {};
             progress[id].etapeCompletee = true;
