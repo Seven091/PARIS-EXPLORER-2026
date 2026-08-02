@@ -28,9 +28,6 @@
             }
         };
 
-        // Code officiel unique requis pour accéder au jeu
-        const CODE_EQUIPE_OFFICIEL = "PARIS2026";
-
         const ENIGMES = [
             {
                 id: '1',
@@ -121,18 +118,18 @@
         const SCORE_MAX_TOTAL = ENIGMES.length * 10;
         const SEUIL_VICTOIRE_SECONDAIRE = 65;
 
-        let isAuthorized = storage.getItem('pe_authorized') === 'true';
+        let teamCode = storage.getItem('pe_team_code') || '';
         let progress = {};
         let currentStepIndex = 0;
         let stepTimers = {};
 
         function loadTeamState() {
             try {
-                if (isAuthorized) {
-                    const rawProgress = storage.getItem('pe_quest_progress');
+                if (teamCode) {
+                    const rawProgress = storage.getItem(`pe_quest_progress_${teamCode}`);
                     progress = rawProgress ? JSON.parse(rawProgress) : {};
                     
-                    const rawTimers = storage.getItem('pe_quest_timers');
+                    const rawTimers = storage.getItem(`pe_quest_timers_${teamCode}`);
                     stepTimers = rawTimers ? JSON.parse(rawTimers) : {};
                 }
             } catch(e) {
@@ -142,10 +139,10 @@
         }
 
         function saveState() {
-            if (isAuthorized) {
-                storage.setItem('pe_authorized', 'true');
-                storage.setItem('pe_quest_progress', JSON.stringify(progress));
-                storage.setItem('pe_quest_timers', JSON.stringify(stepTimers));
+            if (teamCode) {
+                storage.setItem('pe_team_code', teamCode);
+                storage.setItem(`pe_quest_progress_${teamCode}`, JSON.stringify(progress));
+                storage.setItem(`pe_quest_timers_${teamCode}`, JSON.stringify(stepTimers));
             }
         }
 
@@ -168,7 +165,9 @@
         function initTimerForStep(stepId, durationMinutes) {
             if (!stepTimers[stepId]) {
                 const totalMs = (durationMinutes + 5) * 60 * 1000;
-                stepTimers[stepId] = { deadline: Date.now() + totalMs };
+                stepTimers[stepId] = {
+                    deadline: Date.now() + totalMs
+                };
                 saveState();
             }
         }
@@ -178,8 +177,8 @@
             return texte
                 .toLowerCase()
                 .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "") // Ignore les accents
-                .replace(/[^a-z0-9\s]/g, " ")     // Ignore la ponctuation
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/[^a-z0-9\s]/g, " ")
                 .replace(/\s+/g, " ")
                 .trim();
         }
@@ -200,21 +199,36 @@
             const app = document.getElementById('app');
             if (!app) return;
 
-            if (!isAuthorized) {
+            if (!teamCode) {
                 app.className = "flex flex-col min-h-screen p-6 justify-center items-center max-w-md mx-auto";
                 app.innerHTML = `
                     <div class="text-center mb-8">
                         <span class="text-6xl">✨</span>
                         <h1 class="text-3xl font-black mt-3 text-amber-400 tracking-tight">PARIS EXPLORATEUR</h1>
-                        <p class="text-amber-200/80 text-xs mt-1 font-bold tracking-widest uppercase">Accès sécurisé par code d'équipe</p>
+                        <p class="text-amber-200/80 text-xs mt-1 font-bold tracking-widest uppercase">Accès et synchronisation de groupe</p>
                     </div>
 
-                    <div class="w-full bg-slate-800 p-6 rounded-3xl border border-slate-700 shadow-2xl space-y-4">
-                        <h2 class="text-xs font-black uppercase tracking-wider text-slate-400">Entrer le code d'équipe officiel</h2>
-                        <input id="inputCode" type="password" placeholder="Code d'accès..." class="w-full py-3 px-4 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-amber-400 text-center font-mono font-bold tracking-widest uppercase" />
-                        <button onclick="checkTeamCode()" class="w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-sm transition-all uppercase shadow-lg">
-                            Démarrer l'aventure
-                        </button>
+                    <div class="w-full bg-slate-800 p-6 rounded-3xl border border-slate-700 shadow-2xl space-y-6">
+                        <div>
+                            <h2 class="text-xs font-black uppercase tracking-wider text-slate-400 mb-3">1. Créer un groupe</h2>
+                            <button onclick="createTeam()" class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-2xl text-sm transition-all shadow-lg uppercase">
+                                + Générer un code de groupe
+                            </button>
+                        </div>
+
+                        <div class="relative flex py-1 items-center">
+                            <div class="flex-grow border-t border-slate-700"></div>
+                            <span class="flex-shrink mx-4 text-xs font-bold text-slate-500 uppercase">OU</span>
+                            <div class="flex-grow border-t border-slate-700"></div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <h2 class="text-xs font-black uppercase tracking-wider text-slate-400">2. Rejoindre un groupe existant</h2>
+                            <input id="inputCode" type="text" placeholder="Entrer le code (ex: GROUPE-4821)" class="w-full py-3 px-4 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-amber-400 text-center font-mono font-bold tracking-widest uppercase" />
+                            <button onclick="joinTeam()" class="w-full py-3.5 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl text-sm transition-all uppercase">
+                                Rejoindre le groupe
+                            </button>
+                        </div>
                     </div>
                 `;
                 return;
@@ -226,16 +240,17 @@
                 <header class="bg-slate-800 pt-8 pb-6 px-6 rounded-b-[2.5rem] border-b border-slate-700/80 shadow-xl relative text-center">
                     <div class="flex justify-between items-center mb-3">
                         <span class="bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[10px] font-black tracking-widest px-3 py-1 rounded-full uppercase">
-                            🛡️ Groupe Identique Actif
+                            🛡️ Groupe : ${teamCode}
                         </span>
                         <button onclick="leaveTeam()" class="text-slate-400 hover:text-white text-xs font-bold underline">
-                            Quitter
+                            Changer
                         </button>
                     </div>
 
                     <h1 class="text-4xl font-black text-amber-400 my-1">
                         🏆 ${getTotalScore()} <span class="text-lg font-bold text-white">/ ${SCORE_MAX_TOTAL} PTS</span>
                     </h1>
+                    <p class="text-slate-400 text-xs font-medium">Synchronisation globale active</p>
                 </header>
 
                 <main class="flex-1 px-4 py-6 space-y-6">
@@ -250,9 +265,9 @@
                 let couleurBadge = "border-amber-500 text-amber-400";
 
                 if (scoreFinal === SCORE_MAX_TOTAL) {
-                    statutVictoire = "🎉 VICTOIRE PARFAITE ! Vous avez obtenu la totalité des points possibles !";
+                    statutVictoire = "🎉 VICTOIRE PARFAITE ! Votre groupe a obtenu la totalité des points possibles !";
                 } else if (scoreFinal >= SEUIL_VICTOIRE_SECONDAIRE) {
-                    statutVictoire = `⭐ VICTOIRE DE LA PARTIE ! Avec ${scoreFinal} points (≥ ${SEUIL_VICTOIRE_SECONDAIRE} pts), votre équipe remporte le jeu (sauf si une autre équipe fait mieux ou le score parfait).`;
+                    statutVictoire = `⭐ VICTOIRE DE LA PARTIE ! Avec ${scoreFinal} points (≥ ${SEUIL_VICTOIRE_SECONDAIRE} pts), votre groupe remporte le jeu (sauf si un autre groupe fait mieux ou réalise le score parfait).`;
                 } else {
                     statutVictoire = `🏁 Fin de parcours ! Votre score est de ${scoreFinal} points. Le seuil minimal de victoire est fixé à ${SEUIL_VICTOIRE_SECONDAIRE} points.`;
                     couleurBadge = "border-slate-600 text-slate-300";
@@ -268,11 +283,12 @@
                 `;
             } else {
                 const item = ENIGMES[currentStepIndex];
-                const p = progress[item.id] || { erreursZone: 0 };
+                const p = progress[item.id] || {};
                 const timerData = stepTimers[item.id] || { deadline: Date.now() + 100000 };
                 
                 const timeLeftMs = timerData.deadline - Date.now();
                 const timeLeftMin = Math.max(0, Math.ceil(timeLeftMs / 60000));
+                const essaisRestants = 3 - (p.tentativesZone || 0);
 
                 html += `
                     <article class="p-5 rounded-3xl border bg-slate-800/90 border-amber-500/40 shadow-lg space-y-4">
@@ -286,22 +302,25 @@
                             <span class="font-bold text-amber-300">${timeLeftMin > 0 ? timeLeftMin + ' min restantes' : 'Temps réglementaire dépassé'}</span>
                         </div>
 
-                        <!-- 1. QUESTION DE LOCALISATION -->
+                        <!-- 1. QUESTION DE LOCALISATION (AVEC DÉBLOQUAGE AUTOMATIQUE AU BOUT DE 3 ÉCHECS) -->
                         <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-700/50 space-y-2">
                             <div class="text-[10px] font-bold text-amber-400 uppercase tracking-wider">📍 1. Question de Localisation Géographique (3 pts)</div>
                             <p class="text-slate-200 text-xs leading-relaxed">« ${item.questionZone} »</p>
                             
                             ${p.zoneValidee ? `
                                 <div class="p-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-[11px] text-emerald-400 font-bold">
-                                    ${p.zoneDonneeParSecours ? 'Zone débloquée automatiquement (3 erreurs atteintes)' : 'Zone validée ✓ (+3 pts)'}
+                                    ${p.zoneDebloqueeAutomatiquement ? 'Zone débloquée automatiquement après 3 échecs ✓' : 'Zone validée ✓'} (+3 pts)
                                 </div>
                             ` : `
                                 <div class="space-y-2 pt-1">
                                     <input id="input_zone_${item.id}" type="text" placeholder="Votre réponse géographique..." value="${p.saisieZone || ''}" class="w-full text-xs p-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-amber-400" />
+                                    <div class="flex justify-between items-center text-[10px] text-slate-400 px-1">
+                                        <span>Tentatives échouées : ${p.tentativesZone || 0}/3</span>
+                                        <span class="text-amber-300 font-bold">${essaisRestants > 0 ? essaisRestants + ' essai(s) avant déblocage auto' : 'Déblocage en cours...'}</span>
+                                    </div>
                                     <button onclick="validerZone('${item.id}')" class="w-full py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider">
                                         Valider la Zone (+3 pts)
                                     </button>
-                                    <div class="text-[10px] text-slate-400 text-center font-medium">Tentatives erronées : ${p.erreursZone || 0} / 3</div>
                                 </div>
                             `}
                         </div>
@@ -368,26 +387,26 @@
             app.innerHTML = html;
         }
 
-        function checkTeamCode() {
-            const input = document.getElementById('inputCode');
-            if (!input) return;
-            const codeSaisi = input.value.trim().toUpperCase();
+        function createTeam() {
+            teamCode = 'GROUPE-' + Math.floor(1000 + Math.random() * 9000);
+            progress = {};
+            stepTimers = {};
+            saveState();
+            render();
+        }
 
-            if (codeSaisi === CODE_EQUIPE_OFFICIEL) {
-                isAuthorized = true;
-                storage.setItem('pe_authorized', 'true');
-                render();
-            } else {
-                alert("Code d'équipe incorrect. Veuillez vérifier le code officiel de votre groupe.");
-            }
+        function joinTeam() {
+            const input = document.getElementById('inputCode');
+            if (!input || !input.value.trim()) return;
+            teamCode = input.value.trim().toUpperCase();
+            loadTeamState();
+            render();
         }
 
         function leaveTeam() {
-            if (confirm("Voulez-vous vraiment quitter la session ?")) {
-                storage.removeItem('pe_authorized');
-                storage.removeItem('pe_quest_progress');
-                storage.removeItem('pe_quest_timers');
-                isAuthorized = false;
+            if (confirm("Quitter ou changer de groupe ?")) {
+                storage.removeItem('pe_team_code');
+                teamCode = '';
                 progress = {};
                 stepTimers = {};
                 render();
@@ -400,7 +419,7 @@
             const texte = input.value;
             const item = ENIGMES.find(e => e.id === id);
 
-            if (!progress[id]) progress[id] = { points: 0, erreursZone: 0 };
+            if (!progress[id]) progress[id] = { points: 0, tentativesZone: 0 };
             progress[id].saisieZone = texte;
 
             if (verifierMotCle(texte, item.motsClesZone)) {
@@ -409,17 +428,16 @@
                     progress[id].points = (progress[id].points || 0) + 3;
                 }
             } else {
-                progress[id].erreursZone = (progress[id].erreursZone || 0) + 1;
+                progress[id].tentativesZone = (progress[id].tentativesZone || 0) + 1;
                 
-                // Règle : 3 erreurs fausses donnent automatiquement la réponse pour débloquer le jeu
-                if (progress[id].erreursZone >= 3) {
+                // Règle des 3 échecs : Déblocage automatique de la zone géographique
+                if (progress[id].tentativesZone >= 3) {
                     progress[id].zoneValidee = true;
-                    progress[id].zoneDonneeParSecours = true;
-                    progress[id].saisieZone = "Donné après 3 erreurs";
+                    progress[id].zoneDebloqueeAutomatiquement = true;
                     progress[id].points = (progress[id].points || 0) + 3;
-                    alert("3 erreurs atteintes : la réponse géographique vous est exceptionnellement révélée pour ne pas bloquer votre progression !");
+                    alert("3 erreurs enregistrées. La réponse géographique a été automatiquement validée pour vous permettre de progresser !");
                 } else {
-                    alert(`Réponse géographique incorrecte (${progress[id].erreursZone}/3 erreurs). Essayez encore !`);
+                    alert(`Réponse géographique incorrecte (${progress[id].tentativesZone}/3 échecs). Réessayez !`);
                 }
             }
             saveState();
@@ -432,7 +450,7 @@
             const texte = input.value;
             const item = ENIGMES.find(e => e.id === id);
 
-            if (!progress[id]) progress[id] = { points: 0, erreursZone: 0 };
+            if (!progress[id]) progress[id] = { points: 0 };
             progress[id].saisieObjet = texte;
 
             if (verifierMotCle(texte, item.motsClesObjet)) {
@@ -448,7 +466,7 @@
         }
 
         function utiliserJoker(id) {
-            if (!progress[id]) progress[id] = { points: 0, erreursZone: 0 };
+            if (!progress[id]) progress[id] = { points: 0 };
             if (!progress[id].objetValide) {
                 progress[id].objetValide = true;
                 progress[id].saisieObjet = "Joker Photo activé";
@@ -459,7 +477,7 @@
         }
 
         function validerAnecdote(id) {
-            if (!progress[id]) progress[id] = { points: 0, erreursZone: 0 };
+            if (!progress[id]) progress[id] = { points: 0 };
             if (progress[id].anecdoteLue) return;
             progress[id].anecdoteLue = true;
             progress[id].points = (progress[id].points || 0) + 2;
@@ -472,7 +490,7 @@
             if (!file) return;
             const reader = new FileReader();
             reader.onloadend = () => {
-                if (!progress[id]) progress[id] = { points: 0, erreursZone: 0 };
+                if (!progress[id]) progress[id] = { points: 0 };
                 const isNew = !progress[id].photoPrise;
                 progress[id].photoData = reader.result;
                 
