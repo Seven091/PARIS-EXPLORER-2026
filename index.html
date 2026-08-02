@@ -115,6 +115,10 @@
             }
         ];
 
+        // Calcul du score maximal possible (7 étapes * 10 points max par étape = 70 points)
+        const SCORE_MAX_TOTAL = ENIGMES.length * 10;
+        const SEUIL_VICTOIRE_SECONDAIRE = 65;
+
         let teamCode = storage.getItem('pe_team_code') || '';
         let progress = {};
         let currentStepIndex = 0;
@@ -169,14 +173,13 @@
             }
         }
 
-        // Fonction utilitaire pour nettoyer et normaliser le texte (suppression des accents, minuscules, espaces superflus)
         function normaliserTexte(texte) {
             if (!texte) return '';
             return texte
                 .toLowerCase()
                 .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "") // Supprime les accents
-                .replace(/[^a-z0-9\s]/g, " ")     // Remplace la ponctuation par des espaces
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/[^a-z0-9\s]/g, " ")
                 .replace(/\s+/g, " ")
                 .trim();
         }
@@ -246,7 +249,7 @@
                     </div>
 
                     <h1 class="text-4xl font-black text-amber-400 my-1">
-                        🏆 ${getTotalScore()} <span class="text-lg font-bold text-white">PTS</span>
+                        🏆 ${getTotalScore()} <span class="text-lg font-bold text-white">/ ${SCORE_MAX_TOTAL} PTS</span>
                     </h1>
                     <p class="text-slate-400 text-xs font-medium">Synchronisation globale active</p>
                 </header>
@@ -254,13 +257,30 @@
                 <main class="flex-1 px-4 py-6 space-y-6">
             `;
 
-            if (currentStepIndex >= ENIGMES.length - 1 && progress[ENIGMES[ENIGMES.length - 1].id]?.etapeCompletee) {
+            // Vérification de la fin du jeu
+            const dernierId = ENIGMES[ENIGMES.length - 1].id;
+            const estFinDuJeu = currentStepIndex >= ENIGMES.length - 1 && progress[dernierId]?.etapeCompletee;
+
+            if (estFinDuJeu) {
+                const scoreFinal = getTotalScore();
+                let statutVictoire = "";
+                let couleurBadge = "border-amber-500 text-amber-400";
+
+                if (scoreFinal === SCORE_MAX_TOTAL) {
+                    statutVictoire = "🎉 VICTOIRE PARFAITE ! Vous avez obtenu la totalité des points possibles !";
+                } else if (scoreFinal >= SEUIL_VICTOIRE_SECONDAIRE) {
+                    statutVictoire = `⭐ VICTOIRE DE LA PARTIE ! Avec ${scoreFinal} points (≥ ${SEUIL_VICTOIRE_SECONDAIRE} pts), votre équipe remporte le jeu (sauf si une autre équipe fait mieux ou le score parfait).`;
+                } else {
+                    statutVictoire = `🏁 Fin de parcours ! Votre score est de ${scoreFinal} points. Le seuil minimal de victoire est fixé à ${SEUIL_VICTOIRE_SECONDAIRE} points.`;
+                    couleurBadge = "border-slate-600 text-slate-300";
+                }
+
                 html += `
-                    <div class="bg-slate-800/90 border border-amber-500 p-6 rounded-3xl text-center space-y-4 shadow-2xl">
-                        <span class="text-5xl">🎉</span>
+                    <div class="bg-slate-800/90 border ${couleurBadge} p-6 rounded-3xl text-center space-y-4 shadow-2xl">
+                        <span class="text-5xl">🏆</span>
                         <h2 class="text-2xl font-black text-amber-400">Quête Terminée !</h2>
-                        <p class="text-xs text-slate-300 leading-relaxed">Félicitations à votre équipe synchronisée ! Vous avez résolu toutes les étapes.</p>
-                        <div class="text-xl font-bold text-white">Score final : ${getTotalScore()} points</div>
+                        <p class="text-xs text-slate-300 leading-relaxed font-bold">${statutVictoire}</p>
+                        <div class="text-xl font-bold text-white pt-2">Score final : ${scoreFinal} / ${SCORE_MAX_TOTAL} points</div>
                     </div>
                 `;
             } else {
@@ -275,17 +295,17 @@
                     <article class="p-5 rounded-3xl border bg-slate-800/90 border-amber-500/40 shadow-lg space-y-4">
                         <div class="flex justify-between items-center">
                             <span class="text-xs font-black text-amber-400 tracking-wider uppercase">${item.titre}</span>
-                            <span class="bg-slate-900 border border-slate-700 text-amber-300 font-black text-xs px-2.5 py-1 rounded-xl">${p.points || 0} pts</span>
+                            <span class="bg-slate-900 border border-slate-700 text-amber-300 font-black text-xs px-2.5 py-1 rounded-xl">${p.points || 0} / 10 pts</span>
                         </div>
 
                         <div class="flex items-center justify-between bg-slate-900/60 px-3 py-2 rounded-xl border border-slate-700/50 text-[11px]">
                             <span class="text-slate-400">⏳ Fenêtre de trajet :</span>
-                            <span class="font-bold text-amber-300">${timeLeftMin > 0 ? timeLeftMin + ' min restantes' : 'Temps réglementaire dépassé (étape accessible)'}</span>
+                            <span class="font-bold text-amber-300">${timeLeftMin > 0 ? timeLeftMin + ' min restantes' : 'Temps réglementaire dépassé'}</span>
                         </div>
 
-                        <!-- 1. QUESTION DE LOCALISATION (Affichée EN PREMIER) -->
+                        <!-- 1. QUESTION DE LOCALISATION -->
                         <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-700/50 space-y-2">
-                            <div class="text-[10px] font-bold text-amber-400 uppercase tracking-wider">📍 1. Question de Localisation Géographique</div>
+                            <div class="text-[10px] font-bold text-amber-400 uppercase tracking-wider">📍 1. Question de Localisation Géographique (3 pts)</div>
                             <p class="text-slate-200 text-xs leading-relaxed">« ${item.questionZone} »</p>
                             
                             ${p.zoneValidee ? `
@@ -302,9 +322,9 @@
                             `}
                         </div>
 
-                        <!-- 2. DEVINETTE DE L'OBJET / MONUMENT -->
+                        <!-- 2. DEVINETTE DE L'OBJET -->
                         <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-700/50 space-y-2">
-                            <div class="text-[10px] font-bold text-amber-400 uppercase tracking-wider">🗿 2. Devinette de l'Objet / Monument</div>
+                            <div class="text-[10px] font-bold text-amber-400 uppercase tracking-wider">🗿 2. Devinette de l'Objet / Monument (3 pts)</div>
                             <p class="text-slate-200 text-xs leading-relaxed italic">« ${item.devinette} »</p>
 
                             ${p.objetValide ? `
@@ -327,21 +347,22 @@
                         </div>
                 `;
 
-                // Si les réponses sont tentées ou traitées, afficher l'histoire et le défi photo
                 if (p.zoneValidee || p.objetValide || p.jokerUtilise) {
                     html += `
                         <div class="space-y-4 pt-2 border-t border-slate-700/60">
+                            <!-- 3. HISTOIRE -->
                             <div class="bg-slate-900/50 p-3.5 rounded-2xl border border-slate-700/50 space-y-2">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-[11px] font-bold text-amber-300 uppercase">📜 Histoire & Anecdote</span>
-                                    ${!p.anecdoteLue ? `<button onclick="validerAnecdote('${item.id}')" class="text-[10px] bg-amber-500 text-slate-950 px-2.5 py-1 rounded-lg font-black uppercase">Lire (+2 pts)</button>` : `<span class="text-[10px] text-emerald-400 font-bold">Lue ✓</span>`}
+                                    <span class="text-[11px] font-bold text-amber-300 uppercase">📜 Histoire & Anecdote (2 pts)</span>
+                                    ${!p.anecdoteLue ? `<button onclick="validerAnecdote('${item.id}')" class="text-[10px] bg-amber-500 text-slate-950 px-2.5 py-1 rounded-lg font-black uppercase">Lire (+2 pts)</button>` : `<span class="text-[10px] text-emerald-400 font-bold">Lue ✓ (+2 pts)</span>`}
                                 </div>
                                 <p class="text-xs text-slate-300 leading-relaxed">${item.anecdote}</p>
                             </div>
 
+                            <!-- 4. DÉFI PHOTO -->
                             <div class="bg-slate-900/50 p-3.5 rounded-2xl border border-slate-700/50 space-y-3">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-[11px] font-bold text-amber-300 uppercase">📸 Défi Photo requis</span>
+                                    <span class="text-[11px] font-bold text-amber-300 uppercase">📸 Défi Photo (2 pts)</span>
                                     ${p.photoPrise ? `<span class="text-[10px] text-emerald-400 font-bold">Validé ✓ (+2 pts)</span>` : ''}
                                 </div>
                                 <p class="text-xs text-slate-300 font-medium italic">${item.defiPhoto}</p>
@@ -389,7 +410,6 @@
             }
         }
 
-        // Validation séparée de la zone géographique
         function validerZone(id) {
             const input = document.getElementById(`input_zone_${id}`);
             if (!input) return;
@@ -411,7 +431,6 @@
             render();
         }
 
-        // Validation séparée de l'objet/monument
         function validerObjet(id) {
             const input = document.getElementById(`input_objet_${id}`);
             if (!input) return;
@@ -435,18 +454,17 @@
 
         function utiliserJoker(id) {
             if (!progress[id]) progress[id] = { points: 0 };
-            progress[id].jokerUtilise = true;
-            progress[id].objetValide = true;
-            progress[id].zoneValidee = true;
-            progress[id].saisieObjet = "Joker Photo activé";
-            progress[id].saisieZone = "Joker Photo activé";
-            progress[id].points = (progress[id].points || 0) + 2;
-
+            if (!progress[id].objetValide) {
+                progress[id].objetValide = true;
+                progress[id].saisieObjet = "Joker Photo activé";
+                progress[id].points = (progress[id].points || 0) + 3;
+            }
             saveState();
             render();
         }
 
         function validerAnecdote(id) {
+            if (!progress[id]) progress[id] = { points: 0 };
             if (progress[id].anecdoteLue) return;
             progress[id].anecdoteLue = true;
             progress[id].points = (progress[id].points || 0) + 2;
