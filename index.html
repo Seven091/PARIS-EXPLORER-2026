@@ -378,7 +378,7 @@
                                 <p class="text-xs text-slate-300 leading-relaxed">${item.anecdote}</p>
                             </div>
 
-                            <!-- 4. DÉFI PHOTO (Correction de la visibilité et du flux de validation) -->
+                            <!-- 4. DÉFI PHOTO (Accès direct à l'appareil photo uniquement, sans stockage permanent) -->
                             <div class="bg-slate-900/50 p-3.5 rounded-2xl border border-slate-700/50 space-y-3">
                                 <div class="flex justify-between items-center">
                                     <span class="text-[11px] font-bold text-amber-300 uppercase">📸 Défi Photo (2 pts)</span>
@@ -388,28 +388,25 @@
                                 
                                 ${!p.photoPrise ? `
                                     <div class="space-y-3">
-                                        <!-- Bouton universel input file visible qui déclenche l'appareil photo ou la galerie -->
-                                        <label class="block w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 text-center rounded-xl text-xs font-black cursor-pointer shadow-md uppercase tracking-wider transition-all">
-                                            📷 Prendre ou choisir une photo
+                                        <!-- Utilisation de capture="environment" pour forcer l'ouverture directe de la caméra arrière du téléphone -->
+                                        <label class="block w-full py-3 bg-slate-800 hover:bg-slate-700 text-center rounded-xl text-xs font-bold text-amber-400 cursor-pointer border border-slate-600 transition-all">
+                                            📷 Prendre une photo
                                             <input type="file" accept="image/*" capture="environment" onchange="preparerPhoto(event, '${item.id}')" class="hidden" />
                                         </label>
 
                                         ${tempPreview ? `
-                                            <div class="space-y-2 bg-slate-950 p-3 rounded-2xl border border-amber-500/30">
-                                                <div class="text-[11px] font-bold text-amber-400 text-center">Aperçu de la photo sélectionnée :</div>
-                                                <div class="rounded-xl overflow-hidden max-h-56 border border-slate-700 bg-black flex justify-center items-center">
-                                                    <img src="${tempPreview}" class="max-h-56 object-contain" />
+                                            <div class="space-y-2">
+                                                <div class="rounded-xl overflow-hidden max-h-48 border border-slate-700">
+                                                    <img src="${tempPreview}" class="w-full h-full object-cover" />
                                                 </div>
-                                                <button onclick="validerPhoto('${item.id}')" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider shadow-lg">
-                                                    ✓ Valider cette photo (+2 pts)
+                                                <button onclick="validerPhoto('${item.id}')" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider">
+                                                    Valider la photo et attribuer les points (+2 pts)
                                                 </button>
                                             </div>
                                         ` : ''}
                                     </div>
                                 ` : `
-                                    <div class="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs text-emerald-400 font-bold text-center">
-                                        ✓ Défi photo validé et points attribués !
-                                    </div>
+                                    <div class="text-[10px] text-emerald-400 italic text-center font-bold">Défi photo validé avec succès !</div>
                                 `}
                             </div>
 
@@ -536,7 +533,6 @@
             if (!progress[id].photoPrise) {
                 progress[id].photoPrise = true;
                 progress[id].points = (progress[id].points || 0) + 2;
-                delete tempPhotoPreviews[id];
                 saveState();
                 render();
             }
