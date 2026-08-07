@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Paris Explorer - La Quête des Gardiens</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-900 text-slate-100 select-none overflow-x-hidden font-sans pb-12">
@@ -128,6 +129,9 @@
         let progress = {};
         let currentStepIndex = 0;
         let stepTimers = {};
+        
+        // Gestion locale temporaire des aperçus photo (non stockés dans localStorage)
+        let tempPhotoPreviews = {};
 
         function loadTeamState() {
             try {
@@ -273,9 +277,9 @@
                 if (scoreFinal === SCORE_MAX_TOTAL) {
                     statutVictoire = "🎉 VICTOIRE PARFAITE ! Votre groupe a obtenu la totalité des points possibles !";
                 } else if (scoreFinal >= SEUIL_VICTOIRE_SECONDAIRE) {
-                    statutVictoire = `⭐ VICTOIRE DE LA PARTIE ! Avec ${scoreFinal} points (≥ ${SEUIL_VICTOIRE_SECONDAIRE} pts), votre groupe remporte le jeu (sauf si un autre groupe fait mieux ou réalise le score parfait).`;
+                    statutVictoire = `⭐ VICTOIRE DE LA PARTIE ! Avec ${scoreFinal} points (≥ ${SEUIL_VICTOIRE_SECONDAIRE} pts), votre groupe remporte le jeu.`;
                 } else {
-                    statutVictoire = `🏁 Fin de parcours ! Votre score est de ${scoreFinal} points. Le seuil minimal de victoire est fixé à ${SEUIL_VICTOIRE_SECONDAIRE} points.`;
+                    statutVictoire = `🏁 Fin de parcours ! Votre score est de ${scoreFinal} points (seuil minimal : ${SEUIL_VICTOIRE_SECONDAIRE} pts).`;
                     couleurBadge = "border-slate-600 text-slate-300";
                 }
 
@@ -319,7 +323,7 @@
                                 </div>
                             ` : p.zoneDebloqueeAutomatiquement ? `
                                 <div class="p-2 bg-amber-500/10 border border-amber-500/30 rounded-xl text-[11px] text-amber-300 font-bold space-y-1">
-                                    <div>⚠️ 3 échecs atteints. Réponse affichée (0 pt attribué) :</div>
+                                    <div>⚠️ 3 échecs atteints. Réponse affichée (0 pt) :</div>
                                     <div class="text-white font-mono">${item.reponseZoneIndiquee}</div>
                                 </div>
                             ` : `
@@ -327,7 +331,7 @@
                                     <input id="input_zone_${item.id}" type="text" placeholder="Votre réponse géographique..." value="${p.saisieZone || ''}" class="w-full text-xs p-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-amber-400" />
                                     <div class="flex justify-between items-center text-[10px] text-slate-400 px-1">
                                         <span>Tentatives échouées : ${p.tentativesZone || 0}/3</span>
-                                        <span class="text-amber-300 font-bold">${essaisRestants > 0 ? essaisRestants + ' essai(s) avant affichage' : ''}</span>
+                                        <span class="text-amber-300 font-bold">${essaisRestants > 0 ? essaisRestants + ' essai(s) restants' : ''}</span>
                                     </div>
                                     <button onclick="validerZone('${item.id}')" class="w-full py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider">
                                         Valider la Zone (+3 pts)
@@ -362,6 +366,8 @@
                 `;
 
                 if (p.zoneValidee || p.zoneDebloqueeAutomatiquement || p.objetValide || p.jokerUtilise) {
+                    const tempPreview = tempPhotoPreviews[item.id];
+
                     html += `
                         <div class="space-y-4 pt-2 border-t border-slate-700/60">
                             <!-- 3. HISTOIRE -->
@@ -373,7 +379,7 @@
                                 <p class="text-xs text-slate-300 leading-relaxed">${item.anecdote}</p>
                             </div>
 
-                            <!-- 4. DÉFI PHOTO (Sans stockage local de l'image, choix direct appareil/galerie) -->
+                            <!-- 4. DÉFI PHOTO (Sans stockage persistant, avec validation manuelle) -->
                             <div class="bg-slate-900/50 p-3.5 rounded-2xl border border-slate-700/50 space-y-3">
                                 <div class="flex justify-between items-center">
                                     <span class="text-[11px] font-bold text-amber-300 uppercase">📸 Défi Photo (2 pts)</span>
@@ -382,14 +388,25 @@
                                 <p class="text-xs text-slate-300 font-medium italic">${item.defiPhoto}</p>
                                 
                                 ${!p.photoPrise ? `
-                                    <label class="block w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 text-center rounded-xl text-xs font-black uppercase cursor-pointer shadow-md transition-all">
-                                        📷 Prendre ou choisir une photo
-                                        <input type="file" accept="image/*" onchange="gererPhoto(event, '${item.id}')" class="hidden" />
-                                    </label>
-                                ` : `
-                                    <div class="p-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-[11px] text-emerald-400 font-bold text-center">
-                                        Preuve photo validée avec succès !
+                                    <div class="space-y-3">
+                                        <label class="block w-full py-3 bg-slate-800 hover:bg-slate-700 text-center rounded-xl text-xs font-bold text-amber-400 cursor-pointer border border-slate-600 transition-all">
+                                            📁 Choisir ou prendre une photo
+                                            <input type="file" accept="image/*" onchange="preparerPhoto(event, '${item.id}')" class="hidden" />
+                                        </label>
+
+                                        ${tempPreview ? `
+                                            <div class="space-y-2">
+                                                <div class="rounded-xl overflow-hidden max-h-48 border border-slate-700">
+                                                    <img src="${tempPreview}" class="w-full h-full object-cover" />
+                                                </div>
+                                                <button onclick="validerPhoto('${item.id}')" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider">
+                                                    Valider la photo et attribuer les points (+2 pts)
+                                                </button>
+                                            </div>
+                                        ` : ''}
                                     </div>
+                                ` : `
+                                    <div class="text-[10px] text-emerald-400 italic text-center font-bold">Défi photo validé avec succès !</div>
                                 `}
                             </div>
 
@@ -411,6 +428,7 @@
             teamCode = 'GROUPE-' + Math.floor(1000 + Math.random() * 9000);
             progress = {};
             stepTimers = {};
+            tempPhotoPreviews = {};
             saveState();
             render();
         }
@@ -429,6 +447,7 @@
                 teamCode = '';
                 progress = {};
                 stepTimers = {};
+                tempPhotoPreviews = {};
                 render();
             }
         }
@@ -452,7 +471,7 @@
                 
                 if (progress[id].tentativesZone >= 3) {
                     progress[id].zoneDebloqueeAutomatiquement = true;
-                    alert("3 erreurs enregistrées. La réponse géographique vous est affichée (aucun point attribué pour cette question).");
+                    alert("3 erreurs enregistrées. La réponse géographique vous est affichée (aucun point attribué).");
                 } else {
                     alert(`Réponse géographique incorrecte (${progress[id].tentativesZone}/3 échecs). Réessayez !`);
                 }
@@ -502,13 +521,17 @@
             render();
         }
 
-        // CORRECTION MAJEURE PHOTO : Valide immédiatement au choix du fichier, sans stockage binaire
-        function gererPhoto(e, id) {
+        // Permet de charger l'aperçu temporaire sans stocker l'image de façon persistante
+        function preparerPhoto(e, id) {
             const file = e.target.files[0];
             if (!file) return;
+            tempPhotoPreviews[id] = URL.createObjectURL(file);
+            render();
+        }
 
+        // Valide définitivement le défi photo et ajoute les points
+        function validerPhoto(id) {
             if (!progress[id]) progress[id] = { points: 0 };
-            
             if (!progress[id].photoPrise) {
                 progress[id].photoPrise = true;
                 progress[id].points = (progress[id].points || 0) + 2;
