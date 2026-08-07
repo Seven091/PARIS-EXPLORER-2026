@@ -3,556 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Paris Explorer - La Quête des Gardiens</title>
-    <!-- Tailwind CSS -->
+    <title>Paris Explorer - QR Mode</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-900 text-slate-100 select-none overflow-x-hidden font-sans pb-12">
+<body class="bg-slate-900 text-slate-100 font-sans pb-12">
 
-    <div id="app" class="max-w-md mx-auto min-h-screen relative flex flex-col justify-center items-center p-6">
-        <div class="text-amber-400 font-bold animate-pulse text-center">
-            Chargement de l'application en cours... 🗼
-        </div>
+    <div id="app" class="max-w-md mx-auto min-h-screen p-6 flex flex-col justify-center items-center">
+        <!-- Contenu injecté dynamiquement -->
     </div>
 
     <script>
-        let storage = {
-            getItem(key) {
-                try { return localStorage.getItem(key); } catch(e) { return null; }
-            },
-            setItem(key, val) {
-                try { localStorage.setItem(key, val); } catch(e) {}
-            },
-            removeItem(key) {
-                try { localStorage.removeItem(key); } catch(e) {}
-            }
-        };
-
-        const ENIGMES = [
-            {
-                id: '1',
-                titre: 'Étape 1 : Le Quartier Moderne',
-                lieuSecret: 'Centre Pompidou / Quartier de l\'Horloge',
-                tempsEstimeMinutes: 15,
-                questionZone: 'Dans quel quartier piétonnier et animé du 4e arrondissement, connu pour son plateau aux couleurs primaires, dois-je me rendre ?',
-                reponseZoneIndiquee: 'Beaubourg / Quartier de l\'Horloge (4e)',
-                devinette: 'Je suis célèbre pour mes tuyaux colorés et ma structure inversée où l\'acier et les gaines techniques habillent ma façade. Qui suis-je ?',
-                motsClesZone: ['beaubourg', 'horloge', '4e', 'quatrieme', 'plateau'],
-                motsClesObjet: ['pompidou', 'centre pompidou', 'centrepompidou'],
-                anecdote: 'Inauguré en 1977, ce centre culturel avant-gardiste a été conçu par Renzo Piano et Richard Rogers.',
-                defiPhoto: 'Prendre une photo de groupe en imitant la structure métallique ou les couleurs vives du bâtiment.'
-            },
-            {
-                id: '2',
-                titre: 'Étape 2 : L\'Ancien Palais des Rois',
-                lieuSecret: 'Musée du Louvre & Pyramide',
-                tempsEstimeMinutes: 20,
-                questionZone: 'Quel célèbre monument de verre moderne marque l\'entrée principale de ce palais royal situé au bord de la Seine ?',
-                reponseZoneIndiquee: 'Pyramide de verre / Cour Napoléon',
-                devinette: 'Je garde le sourire depuis des siècles derrière ma vitre blindée. J\'habite dans un immense palais fortifié qui fut la demeure des rois de France. Qui suis-je ?',
-                motsClesZone: ['pyramide', 'cour napoleon', 'rivoli'],
-                motsClesObjet: ['louvre', 'joconde', 'mona lisa', 'musee du louvre'],
-                anecdote: 'La pyramide de verre du Louvre a été conçue par l\'architecte I. M. Pei et inaugurée en 1989.',
-                defiPhoto: 'Prendre un selfie avec la pose ou le sourire le plus mystérieux possible.'
-            },
-            {
-                id: '3',
-                titre: 'Étape 3 : Le Pont des Amoureux',
-                lieuSecret: 'Pont des Arts',
-                tempsEstimeMinutes: 15,
-                questionZone: 'Quel quai de la rive gauche permet d\'accéder directement à cette passerelle piétonne ?',
-                reponseZoneIndiquee: 'Quai de Conti',
-                devinette: 'Je suis une passerelle piétonne entièrement réservée aux promeneurs, reliant l\'Institut de France au Musée du Louvre. Qui suis-je ?',
-                motsClesZone: ['quai de conti', 'conti', 'institut de france'],
-                motsClesObjet: ['pont des arts', 'passerelle'],
-                anecdote: 'C\'est le tout premier pont métallique parisien, construit au début du XIXe siècle.',
-                defiPhoto: 'Faire semblant de porter tout le pont sur vos épaules ou de marcher sur un fil invisible.'
-            },
-            {
-                id: '4',
-                titre: 'Étape 4 : Les Gardiens de Pierre',
-                lieuSecret: 'Notre-Dame de Paris (Parvis)',
-                tempsEstimeMinutes: 25,
-                questionZone: 'Sur quelle île naturelle de la Seine, berceau historique de Paris, dois-je poser mes pas ?',
-                reponseZoneIndiquee: 'Île de la Cité (Parvis)',
-                devinette: 'Je domine le cœur historique de la capitale depuis des siècles avec mon architecture gothique et mes gargouilles. Qui suis-je ?',
-                motsClesZone: ['ile de la cite', 'cite', 'parvis'],
-                motsClesObjet: ['notre dame', 'notre-dame', 'cathedrale', 'notredame'],
-                anecdote: 'Le roman de Victor Hugo publié en 1831 a largement contribué à sauver l\'édifice de la ruine.',
-                defiPhoto: 'Imiter une gargouille effrayante ou protectrice en faisant une grimace.'
-            },
-            {
-                id: '5',
-                titre: 'Étape 5 : Le Jardin de la Reine',
-                lieuSecret: 'Jardin du Luxembourg',
-                tempsEstimeMinutes: 25,
-                questionZone: 'Quel grand boulevard de la rive gauche longe ce jardin historique créé par Marie de Médicis ?',
-                reponseZoneIndiquee: 'Boulevard Saint-Michel / Rue de Médicis',
-                devinette: 'Je suis un vaste espace vert célèbre pour son grand bassin octogonal où les enfants font voguer des voiliers. Qui suis-je ?',
-                motsClesZone: ['saint michel', 'boulevard saint michel', 'medicis', 'senat'],
-                motsClesObjet: ['luxembourg', 'jardin du luxembourg', 'palais du luxembourg'],
-                anecdote: 'Ce jardin a été créé en 1612 à la demande de Marie de Médicis pour accompagner son palais.',
-                defiPhoto: 'Faire une photo de groupe en mode course de bateaux au bord du bassin.'
-            },
-            {
-                id: '6',
-                titre: 'Étape 6 : Le Géant de Fer',
-                lieuSecret: 'Champ de Mars / Tour Eiffel',
-                tempsEstimeMinutes: 30,
-                questionZone: 'Sur quel vaste espace vert s\'étend le pied de cette grande dame de fer ?',
-                reponseZoneIndiquee: 'Champ de Mars',
-                devinette: 'Érigée pour une exposition universelle internationale, j\'ai longtemps été la structure la plus haute du monde. Qui suis-je ?',
-                motsClesZone: ['champ de mars', 'mars', 'pont d iena'],
-                motsClesObjet: ['tour eiffel', 'eiffel', 'tour'],
-                anecdote: 'Gustave Eiffel disposait d\'un petit bureau secret aménagé tout en haut de la structure.',
-                defiPhoto: 'Faire la célèbre illusion d\'optique où l\'on tient le sommet de la tour entre ses doigts.'
-            },
-            {
-                id: '7',
-                titre: 'Étape 7 : Le Bouquet Final',
-                lieuSecret: 'Place du Trocadéro',
-                tempsEstimeMinutes: 15,
-                questionZone: 'Quel célèbre palais abritant des musées se dresse sur cette esplanade panoramique ?',
-                reponseZoneIndiquee: 'Palais de Chaillot / Esplanade du Trocadéro',
-                devinette: 'Située sur une colline face à la Seine, j\'offre l\'une des perspectives panoramiques les plus photographiées. Qui suis-je ?',
-                motsClesZone: ['chaillot', 'palais de chaillot', 'esplanade'],
-                motsClesObjet: ['trocadero', 'trocadéro'],
-                anecdote: 'C\'est l\'endroit idéal pour admirer les illuminations de la Dame de Fer à la tombée de la nuit.',
-                defiPhoto: 'Sauter en l\'air ensemble en criant victoire avec la Tour Eiffel en arrière-plan.'
-            }
-        ];
-
-        const SCORE_MAX_TOTAL = ENIGMES.length * 10;
-        const SEUIL_VICTOIRE_SECONDAIRE = 65;
-
-        let teamCode = storage.getItem('pe_team_code') || '';
-        let progress = {};
-        let currentStepIndex = 0;
-        let stepTimers = {};
+        // --- LOGIQUE DE GESTION ---
+        let teamCode = localStorage.getItem('pe_team_code') || '';
         
-        let tempPhotoPreviews = {};
-
-        function loadTeamState() {
-            try {
-                if (teamCode) {
-                    const rawProgress = storage.getItem(`pe_quest_progress_${teamCode}`);
-                    progress = rawProgress ? JSON.parse(rawProgress) : {};
-                    
-                    const rawTimers = storage.getItem(`pe_quest_timers_${teamCode}`);
-                    stepTimers = rawTimers ? JSON.parse(rawTimers) : {};
-                }
-            } catch(e) {
-                progress = {};
-                stepTimers = {};
-            }
-        }
-
-        function saveState() {
-            if (teamCode) {
-                storage.setItem('pe_team_code', teamCode);
-                storage.setItem(`pe_quest_progress_${teamCode}`, JSON.stringify(progress));
-                storage.setItem(`pe_quest_timers_${teamCode}`, JSON.stringify(stepTimers));
-            }
-        }
-
-        function getTotalScore() {
-            return Object.values(progress).reduce((acc, curr) => acc + (curr.points || 0), 0);
-        }
-
-        function updateCurrentStepIndex() {
-            for (let i = 0; i < ENIGMES.length; i++) {
-                const p = progress[ENIGMES[i].id] || {};
-                if (!p.etapeCompletee) {
-                    currentStepIndex = i;
-                    initTimerForStep(ENIGMES[i].id, ENIGMES[i].tempsEstimeMinutes);
-                    return;
-                }
-            }
-            currentStepIndex = ENIGMES.length - 1;
-        }
-
-        function initTimerForStep(stepId, durationMinutes) {
-            if (!stepTimers[stepId]) {
-                const totalMs = (durationMinutes + 5) * 60 * 1000;
-                stepTimers[stepId] = {
-                    deadline: Date.now() + totalMs
-                };
-                saveState();
-            }
-        }
-
-        function normaliserTexte(texte) {
-            if (!texte) return '';
-            return texte
-                .toLowerCase()
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "")
-                .replace(/[^a-z0-9\s]/g, " ")
-                .replace(/\s+/g, " ")
-                .trim();
-        }
-
-        function verifierMotCle(saisie, motsClesTableau) {
-            const cleanSaisie = normaliserTexte(saisie);
-            if (!cleanSaisie) return false;
-            return motsClesTableau.some(mot => {
-                const cleanMot = normaliserTexte(mot);
-                return cleanSaisie.includes(cleanMot);
-            });
+        function genererCodeEtQR() {
+            // Génère un code unique
+            const code = 'GRP-' + Math.floor(1000 + Math.random() * 9000);
+            localStorage.setItem('pe_team_code', code);
+            teamCode = code;
+            
+            // Note : Pour un déploiement réel, vous utiliseriez une API 
+            // pour générer une image QR code pointant vers cette URL avec le code en paramètre.
+            alert("Code généré : " + code + "\nTransmettez ce code aux 4 autres membres de votre groupe.");
+            render();
         }
 
         function render() {
-            loadTeamState();
-            updateCurrentStepIndex();
-
             const app = document.getElementById('app');
-            if (!app) return;
-
-            if (!teamCode) {
-                app.className = "flex flex-col min-h-screen p-6 justify-center items-center max-w-md mx-auto";
-                app.innerHTML = `
-                    <div class="text-center mb-8">
-                        <span class="text-6xl">✨</span>
-                        <h1 class="text-3xl font-black mt-3 text-amber-400 tracking-tight">PARIS EXPLORATEUR</h1>
-                        <p class="text-amber-200/80 text-xs mt-1 font-bold tracking-widest uppercase">Accès et synchronisation de groupe</p>
-                    </div>
-
-                    <div class="w-full bg-slate-800 p-6 rounded-3xl border border-slate-700 shadow-2xl space-y-6">
-                        <div>
-                            <h2 class="text-xs font-black uppercase tracking-wider text-slate-400 mb-3">1. Créer un groupe</h2>
-                            <button onclick="createTeam()" class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-2xl text-sm transition-all shadow-lg uppercase">
-                                + Générer un code de groupe
-                            </button>
-                        </div>
-
-                        <div class="relative flex py-1 items-center">
-                            <div class="flex-grow border-t border-slate-700"></div>
-                            <span class="flex-shrink mx-4 text-xs font-bold text-slate-500 uppercase">OU</span>
-                            <div class="flex-grow border-t border-slate-700"></div>
-                        </div>
-
-                        <div class="space-y-3">
-                            <h2 class="text-xs font-black uppercase tracking-wider text-slate-400">2. Rejoindre un groupe existant</h2>
-                            <input id="inputCode" type="text" placeholder="Entrer le code (ex: GROUPE-4821)" class="w-full py-3 px-4 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-amber-400 text-center font-mono font-bold tracking-widest uppercase" />
-                            <button onclick="joinTeam()" class="w-full py-3.5 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl text-sm transition-all uppercase">
-                                Rejoindre le groupe
-                            </button>
-                        </div>
-                    </div>
-                `;
-                return;
-            }
-
-            app.className = "max-w-md mx-auto min-h-screen relative flex flex-col";
             
-            let html = `
-                <header class="bg-slate-800 pt-8 pb-6 px-6 rounded-b-[2.5rem] border-b border-slate-700/80 shadow-xl relative text-center">
-                    <div class="flex justify-between items-center mb-3">
-                        <span class="bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[10px] font-black tracking-widest px-3 py-1 rounded-full uppercase">
-                            🛡️ Groupe : ${teamCode}
-                        </span>
-                        <button onclick="leaveTeam()" class="text-slate-400 hover:text-white text-xs font-bold underline">
-                            Changer
-                        </button>
-                    </div>
-
-                    <h1 class="text-4xl font-black text-amber-400 my-1">
-                        🏆 ${getTotalScore()} <span class="text-lg font-bold text-white">/ ${SCORE_MAX_TOTAL} PTS</span>
-                    </h1>
-                    <p class="text-slate-400 text-xs font-medium">Synchronisation globale active</p>
-                </header>
-
-                <main class="flex-1 px-4 py-6 space-y-6">
-            `;
-
-            const dernierId = ENIGMES[ENIGMES.length - 1].id;
-            const estFinDuJeu = currentStepIndex >= ENIGMES.length - 1 && progress[dernierId]?.etapeCompletee;
-
-            if (estFinDuJeu) {
-                const scoreFinal = getTotalScore();
-                let statutVictoire = "";
-                let couleurBadge = "border-amber-500 text-amber-400";
-
-                if (scoreFinal === SCORE_MAX_TOTAL) {
-                    statutVictoire = "🎉 VICTOIRE PARFAITE ! Votre groupe a obtenu la totalité des points possibles !";
-                } else if (scoreFinal >= SEUIL_VICTOIRE_SECONDAIRE) {
-                    statutVictoire = `⭐ VICTOIRE DE LA PARTIE ! Avec ${scoreFinal} points (≥ ${SEUIL_VICTOIRE_SECONDAIRE} pts), votre groupe remporte le jeu.`;
-                } else {
-                    statutVictoire = `🏁 Fin de parcours ! Votre score est de ${scoreFinal} points (seuil minimal : ${SEUIL_VICTOIRE_SECONDAIRE} pts).`;
-                    couleurBadge = "border-slate-600 text-slate-300";
-                }
-
-                html += `
-                    <div class="bg-slate-800/90 border ${couleurBadge} p-6 rounded-3xl text-center space-y-4 shadow-2xl">
-                        <span class="text-5xl">🏆</span>
-                        <h2 class="text-2xl font-black text-amber-400">Quête Terminée !</h2>
-                        <p class="text-xs text-slate-300 leading-relaxed font-bold">${statutVictoire}</p>
-                        <div class="text-xl font-bold text-white pt-2">Score final : ${scoreFinal} / ${SCORE_MAX_TOTAL} points</div>
-                    </div>
-                `;
-            } else {
-                const item = ENIGMES[currentStepIndex];
-                const p = progress[item.id] || {};
-                const timerData = stepTimers[item.id] || { deadline: Date.now() + 100000 };
-                
-                const timeLeftMs = timerData.deadline - Date.now();
-                const timeLeftMin = Math.max(0, Math.ceil(timeLeftMs / 60000));
-                const essaisRestants = 3 - (p.tentativesZone || 0);
-
-                html += `
-                    <article class="p-5 rounded-3xl border bg-slate-800/90 border-amber-500/40 shadow-lg space-y-4">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-black text-amber-400 tracking-wider uppercase">${item.titre}</span>
-                            <span class="bg-slate-900 border border-slate-700 text-amber-300 font-black text-xs px-2.5 py-1 rounded-xl">${p.points || 0} / 10 pts</span>
-                        </div>
-
-                        <div class="flex items-center justify-between bg-slate-900/60 px-3 py-2 rounded-xl border border-slate-700/50 text-[11px]">
-                            <span class="text-slate-400">⏳ Fenêtre de trajet :</span>
-                            <span class="font-bold text-amber-300">${timeLeftMin > 0 ? timeLeftMin + ' min restantes' : 'Temps réglementaire dépassé'}</span>
-                        </div>
-
-                        <!-- 1. QUESTION DE LOCALISATION -->
-                        <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-700/50 space-y-2">
-                            <div class="text-[10px] font-bold text-amber-400 uppercase tracking-wider">📍 1. Question de Localisation Géographique (3 pts)</div>
-                            <p class="text-slate-200 text-xs leading-relaxed">« ${item.questionZone} »</p>
+            if (!teamCode) {
+                app.innerHTML = `
+                    <div class="text-center space-y-6">
+                        <h1 class="text-3xl font-black text-amber-400">PARIS EXPLORATEUR</h1>
+                        <div class="p-6 bg-slate-800 rounded-3xl border border-slate-700">
+                            <p class="mb-4 text-sm font-bold">Leader de groupe ?</p>
+                            <button onclick="genererCodeEtQR()" class="w-full py-4 bg-amber-500 rounded-xl font-black text-slate-950 uppercase">Scanner QR / Créer Groupe</button>
                             
-                            ${p.zoneValidee ? `
-                                <div class="p-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-[11px] text-emerald-400 font-bold">
-                                    Zone validée ✓ (+3 pts)
-                                </div>
-                            ` : p.zoneDebloqueeAutomatiquement ? `
-                                <div class="p-2 bg-amber-500/10 border border-amber-500/30 rounded-xl text-[11px] text-amber-300 font-bold space-y-1">
-                                    <div>⚠️ 3 échecs atteints. Réponse affichée (0 pt) :</div>
-                                    <div class="text-white font-mono">${item.reponseZoneIndiquee}</div>
-                                </div>
-                            ` : `
-                                <div class="space-y-2 pt-1">
-                                    <input id="input_zone_${item.id}" type="text" placeholder="Votre réponse géographique..." value="${p.saisieZone || ''}" class="w-full text-xs p-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-amber-400" />
-                                    <div class="flex justify-between items-center text-[10px] text-slate-400 px-1">
-                                        <span>Tentatives échouées : ${p.tentativesZone || 0}/3</span>
-                                        <span class="text-amber-300 font-bold">${essaisRestants > 0 ? essaisRestants + ' essai(s) restants' : ''}</span>
-                                    </div>
-                                    <button onclick="validerZone('${item.id}')" class="w-full py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider">
-                                        Valider la Zone (+3 pts)
-                                    </button>
-                                </div>
-                            `}
+                            <div class="my-6 border-t border-slate-700"></div>
+                            
+                            <p class="mb-4 text-sm font-bold">Membre de groupe ?</p>
+                            <input id="joinCode" placeholder="Entrer le code du leader" class="w-full p-3 mb-2 rounded-lg bg-slate-900 border border-slate-700 text-center uppercase font-mono">
+                            <button onclick="rejoindreGroupe()" class="w-full py-3 bg-slate-700 rounded-xl font-bold uppercase text-xs">Rejoindre</button>
                         </div>
-
-                        <!-- 2. DEVINETTE DE L'OBJET -->
-                        <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-700/50 space-y-2">
-                            <div class="text-[10px] font-bold text-amber-400 uppercase tracking-wider">🗿 2. Devinette de l'Objet / Monument (3 pts)</div>
-                            <p class="text-slate-200 text-xs leading-relaxed italic">« ${item.devinette} »</p>
-
-                            ${p.objetValide ? `
-                                <div class="p-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-[11px] text-emerald-400 font-bold">
-                                    Monument validé ✓ : ${item.lieuSecret} (+3 pts)
-                                </div>
-                            ` : `
-                                <div class="space-y-2 pt-1">
-                                    <input id="input_objet_${item.id}" type="text" placeholder="Nom du monument ou objet..." value="${p.saisieObjet || ''}" class="w-full text-xs p-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-amber-400" />
-                                    <div class="flex gap-2">
-                                        <button onclick="validerObjet('${item.id}')" class="flex-1 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider">
-                                            Valider l'Objet (+3 pts)
-                                        </button>
-                                        <button onclick="utiliserJoker('${item.id}')" class="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-amber-300 font-bold rounded-xl text-xs uppercase tracking-wider" title="Joker Photo">
-                                            📸 Joker
-                                        </button>
-                                    </div>
-                                </div>
-                            `}
-                        </div>
+                    </div>
                 `;
-
-                if (p.zoneValidee || p.zoneDebloqueeAutomatiquement || p.objetValide || p.jokerUtilise) {
-                    const tempPreview = tempPhotoPreviews[item.id];
-
-                    html += `
-                        <div class="space-y-4 pt-2 border-t border-slate-700/60">
-                            <!-- 3. HISTOIRE -->
-                            <div class="bg-slate-900/50 p-3.5 rounded-2xl border border-slate-700/50 space-y-2">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-[11px] font-bold text-amber-300 uppercase">📜 Histoire & Anecdote (2 pts)</span>
-                                    ${!p.anecdoteLue ? `<button onclick="validerAnecdote('${item.id}')" class="text-[10px] bg-amber-500 text-slate-950 px-2.5 py-1 rounded-lg font-black uppercase">Lire (+2 pts)</button>` : `<span class="text-[10px] text-emerald-400 font-bold">Lue ✓ (+2 pts)</span>`}
-                                </div>
-                                <p class="text-xs text-slate-300 leading-relaxed">${item.anecdote}</p>
-                            </div>
-
-                            <!-- 4. DÉFI PHOTO (Accès direct à l'appareil photo uniquement, sans stockage permanent) -->
-                            <div class="bg-slate-900/50 p-3.5 rounded-2xl border border-slate-700/50 space-y-3">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-[11px] font-bold text-amber-300 uppercase">📸 Défi Photo (2 pts)</span>
-                                    ${p.photoPrise ? `<span class="text-[10px] text-emerald-400 font-bold">Validé ✓ (+2 pts)</span>` : ''}
-                                </div>
-                                <p class="text-xs text-slate-300 font-medium italic">${item.defiPhoto}</p>
-                                
-                                ${!p.photoPrise ? `
-                                    <div class="space-y-3">
-                                        <!-- Utilisation de capture="environment" pour forcer l'ouverture directe de la caméra arrière du téléphone -->
-                                        <label class="block w-full py-3 bg-slate-800 hover:bg-slate-700 text-center rounded-xl text-xs font-bold text-amber-400 cursor-pointer border border-slate-600 transition-all">
-                                            📷 Prendre une photo
-                                            <input type="file" accept="image/*" capture="environment" onchange="preparerPhoto(event, '${item.id}')" class="hidden" />
-                                        </label>
-
-                                        ${tempPreview ? `
-                                            <div class="space-y-2">
-                                                <div class="rounded-xl overflow-hidden max-h-48 border border-slate-700">
-                                                    <img src="${tempPreview}" class="w-full h-full object-cover" />
-                                                </div>
-                                                <button onclick="validerPhoto('${item.id}')" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider">
-                                                    Valider la photo et attribuer les points (+2 pts)
-                                                </button>
-                                            </div>
-                                        ` : ''}
-                                    </div>
-                                ` : `
-                                    <div class="text-[10px] text-emerald-400 italic text-center font-bold">Défi photo validé avec succès !</div>
-                                `}
-                            </div>
-
-                            <button onclick="finaliserEtPasserEtape('${item.id}')" class="w-full py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider shadow-lg transition-all">
-                                🚀 Valider l'étape et passer à la suivante
-                            </button>
-                        </div>
-                    `;
-                }
-
-                html += `</article>`;
-            }
-
-            html += `</main>`;
-            app.innerHTML = html;
-        }
-
-        function createTeam() {
-            teamCode = 'GROUPE-' + Math.floor(1000 + Math.random() * 9000);
-            progress = {};
-            stepTimers = {};
-            tempPhotoPreviews = {};
-            saveState();
-            render();
-        }
-
-        function joinTeam() {
-            const input = document.getElementById('inputCode');
-            if (!input || !input.value.trim()) return;
-            teamCode = input.value.trim().toUpperCase();
-            loadTeamState();
-            render();
-        }
-
-        function leaveTeam() {
-            if (confirm("Quitter ou changer de groupe ?")) {
-                storage.removeItem('pe_team_code');
-                teamCode = '';
-                progress = {};
-                stepTimers = {};
-                tempPhotoPreviews = {};
-                render();
-            }
-        }
-
-        function validerZone(id) {
-            const input = document.getElementById(`input_zone_${id}`);
-            if (!input) return;
-            const texte = input.value;
-            const item = ENIGMES.find(e => e.id === id);
-
-            if (!progress[id]) progress[id] = { points: 0, tentativesZone: 0 };
-            progress[id].saisieZone = texte;
-
-            if (verifierMotCle(texte, item.motsClesZone)) {
-                if (!progress[id].zoneValidee) {
-                    progress[id].zoneValidee = true;
-                    progress[id].points = (progress[id].points || 0) + 3;
-                }
             } else {
-                progress[id].tentativesZone = (progress[id].tentativesZone || 0) + 1;
-                
-                if (progress[id].tentativesZone >= 3) {
-                    progress[id].zoneDebloqueeAutomatiquement = true;
-                    alert("3 erreurs enregistrées. La réponse géographique vous est affichée (aucun point attribué).");
-                } else {
-                    alert(`Réponse géographique incorrecte (${progress[id].tentativesZone}/3 échecs). Réessayez !`);
-                }
+                app.innerHTML = `
+                    <div class="text-center space-y-4">
+                        <h2 class="text-xs font-black text-slate-400 uppercase tracking-widest">Code de votre groupe</h2>
+                        <div class="text-4xl font-black text-amber-400 tracking-tighter">${teamCode}</div>
+                        <p class="text-xs text-slate-500">Montrez ce code à vos équipiers (Max 5 personnes)</p>
+                        <button onclick="localStorage.clear(); location.reload();" class="text-[10px] text-red-400 underline">Réinitialiser</button>
+                    </div>
+                `;
             }
-            saveState();
-            render();
         }
 
-        function validerObjet(id) {
-            const input = document.getElementById(`input_objet_${id}`);
-            if (!input) return;
-            const texte = input.value;
-            const item = ENIGMES.find(e => e.id === id);
-
-            if (!progress[id]) progress[id] = { points: 0 };
-            progress[id].saisieObjet = texte;
-
-            if (verifierMotCle(texte, item.motsClesObjet)) {
-                if (!progress[id].objetValide) {
-                    progress[id].objetValide = true;
-                    progress[id].points = (progress[id].points || 0) + 3;
-                }
+        function rejoindreGroupe() {
+            const code = document.getElementById('joinCode').value.toUpperCase();
+            if(code.startsWith('GRP-')) {
+                localStorage.setItem('pe_team_code', code);
+                teamCode = code;
+                render();
             } else {
-                alert("Nom du monument incorrect. Réessayez !");
-            }
-            saveState();
-            render();
-        }
-
-        function utiliserJoker(id) {
-            if (!progress[id]) progress[id] = { points: 0 };
-            if (!progress[id].objetValide) {
-                progress[id].objetValide = true;
-                progress[id].saisieObjet = "Joker Photo activé";
-                progress[id].points = (progress[id].points || 0) + 3;
-            }
-            saveState();
-            render();
-        }
-
-        function validerAnecdote(id) {
-            if (!progress[id]) progress[id] = { points: 0 };
-            if (progress[id].anecdoteLue) return;
-            progress[id].anecdoteLue = true;
-            progress[id].points = (progress[id].points || 0) + 2;
-            saveState();
-            render();
-        }
-
-        function preparerPhoto(e, id) {
-            const file = e.target.files[0];
-            if (!file) return;
-            tempPhotoPreviews[id] = URL.createObjectURL(file);
-            render();
-        }
-
-        function validerPhoto(id) {
-            if (!progress[id]) progress[id] = { points: 0 };
-            if (!progress[id].photoPrise) {
-                progress[id].photoPrise = true;
-                progress[id].points = (progress[id].points || 0) + 2;
-                saveState();
-                render();
+                alert("Code invalide");
             }
         }
 
-        function finaliserEtPasserEtape(id) {
-            if (!progress[id]) progress[id] = {};
-            progress[id].etapeCompletee = true;
-            saveState();
-            render();
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            try {
-                loadTeamState();
-                render();
-            } catch(err) {
-                document.getElementById('app').innerHTML = `<div class="text-red-400 p-4 text-center text-xs">Erreur de chargement : ${err.message}</div>`;
-            }
-        });
+        render();
     </script>
 </body>
 </html>
